@@ -9,7 +9,7 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 
 ## 1. Executive Summary & Progress
 
-- **Project Status**: `PLANNING` (SPEC-002 approved, not planned) · staging deployed 2026-11-25
+- **Project Status**: `PLANNING` (SPEC-002 split; SPEC-002a and SPEC-002b approved, not planned) · staging deployed 2026-11-25
 - **Last Updated**: 2026-11-25
 - **Owner**: the project owner, alone since 2026-11-24 (frontend and backend). The scaffold was built by a friend who has stopped.
 - **Active Session Agent**: Developer + Claude Code
@@ -48,8 +48,8 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 
 ## 3. Active In-Flight Work
 
-- **Active Spec**: [`docs/specs/SPEC-002-master-data-to-backend.md`](docs/specs/SPEC-002-master-data-to-backend.md) (`APPROVED`, `spectre_audit: PASSED`, `complexity: complex`)
-- **Active Plan**: None (SPEC-002 not planned yet)
+- **Active Spec**: [`docs/specs/SPEC-002a-master-data-schema-seed-public-read.md`](docs/specs/SPEC-002a-master-data-schema-seed-public-read.md) (`APPROVED`, `PASSED`, `complex`). Next: [`SPEC-002b`](docs/specs/SPEC-002b-master-data-admin-write.md) (`APPROVED`, `PASSED`, `complex`), after 002a is verified. Parent SPEC-002 split by D11.
+- **Active Plan**: None (next: `gb-plan` SPEC-002a)
 - **Current Task In-Flight**: None (Phase 0 changes are in the working tree, waiting for the owner to commit)
 - **Active Battleground**: None
 
@@ -59,9 +59,9 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 
 ### Immediate Next Steps (For Next Agent / Developer)
 1. [ ] Enable R2 on the Cloudflare account (needs a payment method; free tier), run `make cf-bootstrap`-style bucket creation for staging, restore the commented `r2_buckets` blocks in both `wrangler.toml`, redeploy. `/health` should then return 200.
-2. [ ] Review API contracts v0.2.0 against `frontend-client` (English keys D08, nullable love-status texts and uncategorized lists D09/D10). No second approver any more; review against the frontend code.
+2. [ ] Review the client contract against `frontend-client` as the first step of `gb-plan` SPEC-002a (D11 item 5): English keys D08, nullable love-status texts and uncategorized lists D09/D10/D11, plus the two notes in SPEC-002a §10 (405 vs unknown paths, staging server URL).
 3. [ ] Replace the Turnstile always-pass test secret on staging client with a real widget secret before any route uses Turnstile.
-4. [ ] Plan SPEC-002. Owner decision pending: build it whole (36 admin operations) or ship the 4 public GETs + seed first and the admin CRUD later.
+4. [ ] `gb-plan` SPEC-002a (schema, seed, public GETs), then `gb-execute`, `gb-verify`, deploy to staging. Then the frontend switch (outside the spec, D11), then SPEC-002b.
 5. [ ] Then the 3+1 reading engine (`TODO-003`).
 
 ### Leftovers & Technical Nuances
@@ -106,4 +106,5 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 | 2026-11-20 | Repos merged into `backend/`; Cloudflare deploy prep (Makefile, CI, deploy workflow, runbook) |
 | 2026-11-21 | SPEC-002 approved after 3 Spectre rounds; D05–D10; contracts v0.2.0; `TODO-010`, `TODO-011` |
 | 2026-11-25 | Local run of the admin Worker found two bugs the host tests could not see: wasm PBKDF2 failed (`WorkerGlobalScope` cast) so login never worked on Workers, and refresh rotation inserted an empty `user_id` (FK failure). Both fixed, regression test added (24 tests). 5xx details now logged server-side. `make create-user` fixed to run from `admin/`. First staging deploy |
+| 2026-11-25 | SPEC-002 split into SPEC-002a (read) and SPEC-002b (write), D11; both approved after a Spectre split audit (one gap resolved: uncategorized order) |
 | 2026-11-24 | Friend stopped; owner maintains alone. Phase 0: HANDOFF and TODO merged into one set each, docs updated, Rust 1.100 installed, 23/23 tests, fmt + clippy clean, CI lint steps blocking |

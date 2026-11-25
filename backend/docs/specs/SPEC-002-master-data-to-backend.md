@@ -5,12 +5,14 @@ status: APPROVED # DRAFT | SPECTRE_REVIEW | APPROVED | IMPLEMENTING | COMPLETED
 spectre_audit: PASSED # PENDING | PASSED
 complexity: complex # confirmed by developer 2026-11-21: 36 admin operations over 10 resources, reference checks, audit logging, seed
 created_at: "2026-11-21"
-updated_at: "2026-11-21"
+updated_at: "2026-11-25"
 parent_spec: ""
-sub_specs: []
+sub_specs: [SPEC-002a, SPEC-002b]
 ---
 
 # Specification: Move Frontend Master Data to the Backend
+
+> **Split on 2026-11-25 ([D11](../decisions/D11.md))** into [SPEC-002a](SPEC-002a-master-data-schema-seed-public-read.md) (schema, seed, public read) and [SPEC-002b](SPEC-002b-master-data-admin-write.md) (admin read and write). This file stays the normative definition of the data (§4) and the record of the original audit. Plan and execute the sub-specs, not this file.
 
 > Single spec for both services (`client` and `admin`). Folds in the old SPEC-002 "cards catalog & daily reading" item from `docs/admin/specs/OUT_OF_SCOPE.md` and `docs/client/specs/OUT_OF_SCOPE.md`.
 
@@ -217,7 +219,7 @@ Contract v0.2.0, drafted 2026-11-21. Both files need frontend review in a PR.
   - Cache invalidation on edit (`TODO-011`).
   - Admin UI, customer accounts, payments.
   - Frontend changes (frontend owner switches imports to API calls and maps English keys).
-- **Modular Split**: None (developer chose one spec).
+- **Modular Split**: [SPEC-002a](SPEC-002a-master-data-schema-seed-public-read.md) and [SPEC-002b](SPEC-002b-master-data-admin-write.md) (D11, 2026-11-25). The developer first chose one spec (2026-11-21).
 
 ## 9. Resolved Items
 1. Keep/drop table confirmed.

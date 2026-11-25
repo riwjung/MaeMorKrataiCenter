@@ -461,7 +461,7 @@ components:
             $ref: "#/components/schemas/LabeledKey"
         uncategorized_situations:
           type: array
-          description: Situations whose category was deleted (D10). Includes the love-status situations while no `love` category exists. Ordered by sort order, then key. Usually empty.
+          description: Situations whose category was deleted (D10), ordered by sort order, then key; followed by the love-status situations (in 3-card order) while no `love` category exists (D11). Usually empty.
           items:
             $ref: "#/components/schemas/LabeledKey"
         uncategorized_suggestions:
