@@ -45,7 +45,7 @@ Rules: `ENV` is `dev`, `staging` or `prod`; `SERVICE` is `admin` or `client`. If
 
 ## GitHub Actions
 
-- `.github/workflows/backend-ci.yml` (PRs and `main`, path-filtered to `backend/`): wasm `cargo check`, and `cargo test`. Rustfmt and clippy run as advisory only until TODO-006 lands.
+- `.github/workflows/backend-ci.yml` (PRs and `main`, path-filtered to `backend/`): wasm `cargo check`, `cargo test`, `cargo fmt --check` and clippy with `-D warnings` on host (all targets) and wasm32. All steps block the build since 2026-11-24. CI uses the latest stable Rust, so a new clippy release can add lints; fix them in a small PR when that happens.
 - `.github/workflows/backend-deploy.yml`: **manual** (`workflow_dispatch`) with an environment choice. Applies migrations, then deploys admin, then client.
   - Repo secrets required: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
   - Token scopes: Workers Scripts (edit), D1 (edit), Workers R2 Storage (edit), Account Settings (read).

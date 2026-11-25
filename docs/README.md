@@ -8,16 +8,18 @@ The shared space between frontend and backend. Read `context/` first, then agree
 | [`reference/`](reference) | Raw reference material: legacy workshop SQL migrations, the never-migrated schema proposal (DBML), Social Center summary |
 | `api/client/` | API contract for the customer website. Use OpenAPI (`openapi.yaml`). |
 | `api/admin/` | API contract for the admin dashboard and content automation. |
-| `decisions/` | Decision records, named `NNNN-short-title.md` (for example `0001-auth.md`). |
+| `decisions/` | Project-level decision records, named `NNNN-short-title.md`. Backend technical decisions (D01–D10) live in [`../backend/docs/`](../backend/docs). |
 | [`handover-frontend-decoupling.md`](handover-frontend-decoupling.md) | Audit of `frontend-client/` data/features to move to backend & handover bridge to Spec 01 (Rust + Cloudflare Workers/D1/R2 scaffold). |
 
 Start with [`context/01-overview.md`](context/01-overview.md).
 
 ## Workflow
 
-1. Need a new or changed endpoint? Open a branch and a pull request that edits `api/`.
-2. The other side reviews and approves before anyone writes code.
-3. Once merged, the contract is final: frontend mocks against it, backend implements it.
+One person maintains frontend and backend since 2026-11-24, so there is no cross-team approval step. The contract still comes first:
+
+1. Need a new or changed endpoint? Edit `api/` first, on a branch.
+2. Implement the backend and the frontend call against that contract, in the same pull request or a later one.
+3. Once merged, the contract is the source of truth: the frontend can mock against it and the backend tests check it.
 
 ## Source of the context docs
 

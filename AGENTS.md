@@ -4,7 +4,7 @@ Instructions for AI coding agents (Codex, Claude Code, others) working in this r
 
 ## Talk to the user in Thai
 
-The user (frontend owner) prefers Thai in conversation. Code, comments, commit messages and docs are in English.
+The user (project owner; maintains frontend and backend alone since 2026-11-24) prefers Thai in conversation. Code, comments, commit messages and docs are in English.
 User-facing copy on the website stays in Thai.
 
 ## What this repo is
@@ -12,19 +12,21 @@ User-facing copy on the website stays in Thai.
 Monorepo for MaeMorKratai (แม่หมอกระต่าย), a Thai tarot website. Remote: `git@github.com:riwjung/MaeMorKrataiCenter.git`, branch `main`.
 Local checkout: `~/AIVideoLocal/mmk-platform/` (kept off the iCloud Desktop on purpose; iCloud evicts files and breaks builds).
 
-| Folder | Owner | State |
-|---|---|---|
-| `frontend-client/` | Frontend (the user) | Customer tarot site. Next.js 16 static export, pure UI, no backend. Builds. |
-| `frontend-admin/` | Frontend (the user) | Empty. Future dashboard + content automation control. |
-| `docs/` | Both | Project context (English), API contracts, decisions. |
-| `backend-client/` | Backend (a friend) | Empty. Do not write code here unless asked. |
-| `backend-admin/` | Backend (a friend) | Empty. Do not write code here unless asked. |
+All folders are maintained by the user. The backend scaffold was built by a friend who has stopped working on it; its specs, decisions and plan records in `backend/docs/` explain why it is built the way it is.
+
+| Folder | State |
+|---|---|
+| `frontend-client/` | Customer tarot site. Next.js 16 static export, live on Cloudflare Workers, no backend calls yet. |
+| `frontend-admin/` | Empty. Future dashboard, reader scoring page, content automation control. |
+| `backend/` | Rust Workers `client/` and `admin/` sharing D1/R2. Admin auth (SPEC-001) is done and tested; SPEC-002 (master data) is approved, not built. Nothing deployed yet. |
+| `docs/` | Project context (English), API contracts, reading rules. |
 
 ## Read before working
 
 1. `README.md` for the rules
 2. `docs/context/01-overview.md` to `08-open-decisions.md`, plus `docs/context/glossary.md`
-3. `frontend-client/README.md` and `frontend-client/AGENTS.md` (Next.js 16 note: read `node_modules/next/dist/docs/` before using Next APIs)
+3. Frontend work: `frontend-client/README.md` and `frontend-client/AGENTS.md` (Next.js 16 note: read `node_modules/next/dist/docs/` before using Next APIs)
+4. Backend work: `backend/README.md`, `backend/HANDOFF.md`, `backend/TODO.md`, then `backend/CLAUDE.md` (gb-sdlc rules)
 
 ## Rules
 
@@ -44,7 +46,19 @@ npm run typecheck
 npm run build      # static export to out/
 ```
 
-## Current task: deploy frontend-client to Cloudflare
+## backend commands
+
+```sh
+cd backend
+make help          # every target, with [CLOUD] on the ones that change Cloudflare
+make test          # cargo test --workspace
+make check         # wasm32 type-check of both Workers
+```
+
+`[CLOUD]` targets (`cf-bootstrap`, `cf-secret`, `migrate-staging|prod`, `deploy-*`) change real Cloudflare state: ask first.
+Disk note: the Mac has little free space; a Rust build needs a few GB in `backend/target/`.
+
+## frontend-client deployment (done)
 
 Decision: Cloudflare **Workers with Static Assets** (not Pages). The user has never used Cloudflare; explain each step.
 
@@ -69,7 +83,7 @@ Plan:
 5. Custom domain via Settings → Domains & Routes (if the user has a domain)
 6. Keep the current Vercel site (https://mae-mor-kratai.vercel.app/) live until Cloudflare is verified on mobile, Safari, the shuffle video and `/reading/`. `frontend-client/vercel.json` can be removed after the switch.
 
-Later: `frontend-admin` as a second Worker behind Cloudflare Access (only the user and the backend friend).
+Later: `frontend-admin` as a second Worker behind Cloudflare Access (only the owner and the reader).
 
 ## Open items
 

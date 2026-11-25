@@ -26,9 +26,9 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    Customer[frontend-client] --> CAPI[backend-client API]
-    Admin[frontend-admin] --> AAPI[backend-admin API]
-    Automation[Content automation, frontend owner's Mac] --> AAPI
+    Customer[frontend-client] --> CAPI[backend/client API]
+    Admin[frontend-admin] --> AAPI[backend/admin API]
+    Automation[Content automation, owner's Mac] --> AAPI
     CAPI --> Auth[Auth + app roles]
     AAPI --> Auth
     CAPI --> DB[(Postgres)]
@@ -46,6 +46,8 @@ flowchart TD
     Worker --> DB
     AAPI --> Review[Human review / publish approval]
 ```
+
+**Status 2026-11-24:** the API layer is built as two Rust Workers on Cloudflare (`backend/client`, `backend/admin`). The database is Cloudflare D1 (SQLite), not Postgres, and object storage is R2 (decisions D01 and D02 in `backend/docs/admin/decisions/`). Auth and roles are done (SPEC-001); the reading engine, payments and job queue are not started. The notes below are the original proposal; read "Postgres" as "D1" where they still apply.
 
 ### Responsibilities
 

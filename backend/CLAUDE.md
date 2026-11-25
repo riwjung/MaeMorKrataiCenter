@@ -11,3 +11,11 @@ This project follows the `gb-sdlc` Spec-Driven Development framework. The master
 - When the user asks to plan an approved spec ("plan out the spec", "plan docs/specs/x.md"), do not plan it in this chat. Run the `/gb-plan` procedure from `.claude/skills/gb-plan/SKILL.md` (use the complex/deep variant only if the spec's `complexity` says so): estimator, parallel planners, then plan auditor. The same applies to "execute the plan" (`/gb-execute`) and "verify the plan" (`/gb-verify`).
 - Read active skills listed in `.gb-sdlc/config.yaml` before planning or writing code.
 - Add project-specific Claude Code guidance (build/test commands, conventions) below this line.
+
+## Project notes (2026-11-24)
+
+- **Owner**: one person maintains frontend and backend since 2026-11-24. Talk to them in Thai; code, comments, commits and docs stay in English.
+- **Missing skills**: `.claude/skills/gb-plan`, `gb-execute` and `gb-verify` were never committed (they lived on the previous developer's machine). Until they are recreated, follow `.gb-sdlc/workflows/02-planning-battleground.md`, `03-execution-deviation.md` and `04-verification-audit.md` directly, using the presets in `.gb-sdlc/agents/`.
+- **Commands**: `make help` lists everything. `make test` and `make check` are local. Targets marked `[CLOUD]` change real Cloudflare state: ask the owner first.
+- **One register**: a single `HANDOFF.md` and `TODO.md` cover both Workers. New proto-spec IDs continue from `TODO-015`; section 0 of `TODO.md` maps the old per-service IDs.
+- **Never commit** `.dev.vars`, secrets, real reader answers, audio or holdout data.

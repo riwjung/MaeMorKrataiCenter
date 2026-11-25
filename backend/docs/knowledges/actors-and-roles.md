@@ -14,7 +14,7 @@ Last confirmed with the backend owner: 2026-11-20.
 
 ## Key points
 
-- **The reader is not a public user.** She works through `backend-admin` with an admin account. All knowledge editing and release publishing happen on the admin side.
+- **The reader is not a public user.** She works through the admin Worker (`backend/admin`) with an admin account. All knowledge editing and release publishing happen on the admin side.
 - **Admin is the working top role.** The owner and the reader both hold `admin` and have the same permissions (edit master data, publish releases). There is no edit vs. publish split between them.
 - **Customers are anonymous.** "No account" does not mean "no stored state": a 3+1 reading still needs the server to remember the hidden 4th card between the start and reveal calls. That state is not tied to a person.
 - **Accounts are provisioned, never self-registered.** Admin users are created with `make create-user` (D03).

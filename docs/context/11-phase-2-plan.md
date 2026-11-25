@@ -23,15 +23,15 @@ All 40 development answers were read locally (answers stay private). Three findi
 
 ## Work items
 
-| # | Item | Owner | Output | Done when |
+| # | Item | Part | Output | Done when |
 |---|---|---|---|---|
-| 1 | Rules v0.2 spec | Frontend | Update 09 and 10 with the changes above | Backend has reviewed |
+| 1 | Rules v0.2 spec | Frontend | Update 09 and 10 with the changes above | 09 and 10 agree with each other and with the case-01–03 examples |
 | 2 | Draft card data | Frontend + reader | 78 × 4 rows: score, keyword, meaning, condition, advice. Drafted from the reader's daily meanings and development answers, every row `draft` | Reader has confirmed or edited each row (sheet first) |
 | 3 | Expected answers for evaluation | Frontend | For each development case: mode, expected ladder level or main action, expected expansion role | Labels checked by the reader on a sample |
 | 4 | Reference engine + evaluator | Frontend | Small reference implementation of Engine A and a local evaluator over the 40 cases; only aggregate results leave the machine | ≥ 80 % of verdict cases hit the reader's ladder level and role; advice cases name the reader's main action |
 | 5 | Master data migration + admin API | Backend | D1 tables from 10, CRUD for card data, release publish | Reader data can be loaded and versioned |
-| 6 | Reading API contract | Both | `docs/api/client/openapi.yaml`: start session (3 cards), reveal 4th card, get answer; `docs/api/admin/openapi.yaml`: card data + releases | Both sides approved in a PR |
-| 7 | Engine A in backend-client | Backend | Rust port of the reference engine, same test vectors | Same outputs as the reference on all test vectors |
+| 6 | Reading API contract | Both | `docs/api/client/openapi.yaml`: start session (3 cards), reveal 4th card, get answer; `docs/api/admin/openapi.yaml`: card data + releases | Contract merged before the endpoints are built |
+| 7 | Engine A in backend/client | Backend | Rust port of the reference engine, same test vectors | Same outputs as the reference on all test vectors |
 | 8 | Customer UI for 3+1 | Frontend | `/reading` gets the 4th card step, calls the API (mock first) | Works against the mock, then staging |
 | 9 | Reader scoring page | Frontend | `frontend-admin` page to edit card data | Reader can edit without a sheet |
 | 10 | Holdout test | Both | One run on the 20 holdout cases with the locked release | Pilot targets in [07](07-roadmap.md) |

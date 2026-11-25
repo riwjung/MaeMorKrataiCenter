@@ -1,11 +1,11 @@
-# 10 · Reading master data (proposal for backend-admin)
+# 10 · Reading master data (proposal for backend/admin)
 
-Status: **proposal** (2026-11-19). Supports the rules in [09 · Reading rules v0](09-reading-rules-v0.md). Written as Cloudflare D1 (SQLite) DDL in the same style as `backend-admin/migrations/0001_init_auth.sql` (TEXT ids, INTEGER epoch timestamps, CHECK enums). Canonical migrations stay owned by `backend-admin`; adapt freely.
+Status: **proposal** (2026-11-19). Supports the rules in [09 · Reading rules v0](09-reading-rules-v0.md). Written as Cloudflare D1 (SQLite) DDL in the same style as `backend/migrations/0001_init_auth.sql` (TEXT ids, INTEGER epoch timestamps, CHECK enums). Canonical migrations live in `backend/migrations/` and are applied through the admin Worker; adapt freely.
 
 ## Principles
 
 - **Versioned knowledge.** Every rule row belongs to a `knowledge_release`. Readings store the release they used, so editing data never changes a reading a customer already received.
-- **Draft vs approved.** Rows carry `status`; only rows in a `published` release are visible to `backend-client`.
+- **Draft vs approved.** Rows carry `status`; only rows in a `published` release are visible to the client Worker.
 - **Canonical keys.** English keys everywhere (`love`, `commitment`, `talking`, `the-fool`); Thai labels are display data.
 - **No real answers in the rule tables.** Reader answers and audio stay in private storage; rules link to them by `source_ref` only.
 
@@ -216,5 +216,5 @@ load release → for each drawn card: score = override(card, category, intent) ?
 
 ## API surface (to agree in `docs/api/`)
 
-- `backend-admin`: CRUD for `card_scores`, `card_intent_overrides`, `answer_ladders`, `answer_templates`; release create / submit / publish; run evaluation.
-- `backend-client`: start session (baseline), reveal expansion (follow-up), get output. Only published releases.
+- `backend/admin`: CRUD for `card_scores`, `card_intent_overrides`, `answer_ladders`, `answer_templates`; release create / submit / publish; run evaluation.
+- `backend/client`: start session (baseline), reveal expansion (follow-up), get output. Only published releases.

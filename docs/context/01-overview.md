@@ -14,17 +14,19 @@ MaeMorKratai (แม่หมอกระต่าย, "the rabbit fortune telle
 4. **An admin dashboard** to run the website and the content channels. Later, **create tarot video series from the dashboard**.
 5. **Any paid provider usage** (AI image/video/voice credits) needs a price check and owner approval first. Generating content and publishing it are two separate approvals.
 
-## Team split (from 2026-11-14)
+## Ownership (from 2026-11-24)
 
-| Area | Owner | Folder |
-|---|---|---|
-| Customer website UI | Frontend | `frontend-client/` |
-| Admin dashboard UI, content automation tool | Frontend | `frontend-admin/` |
-| Customer API | Backend | `backend-client/` |
-| Admin API | Backend | `backend-admin/` |
-| Contracts and shared knowledge | Both | `docs/` |
+From 2026-11-14 to 2026-11-23 the work was split: the owner built the frontend and a friend built the backend scaffold (SPEC-001 admin auth, SPEC-002 master-data spec, Cloudflare deploy prep). The friend has stopped; since 2026-11-24 the owner maintains everything.
 
-The content automation program (video generation pipeline) runs only on the frontend owner's Mac and talks to `backend-admin` through the admin API.
+| Area | Folder |
+|---|---|
+| Customer website UI | `frontend-client/` |
+| Admin dashboard UI, content automation tool | `frontend-admin/` |
+| Customer API (public Worker) | `backend/client/` |
+| Admin API (auth + admin Worker), D1 migrations | `backend/admin/`, `backend/migrations/` |
+| Contracts and shared knowledge | `docs/` |
+
+The content automation program (video generation pipeline) runs only on the owner's Mac and talks to the admin Worker through the admin API.
 
 ## Reading order
 
@@ -39,7 +41,7 @@ The content automation program (video generation pipeline) runs only on the fron
 9. [09 · Reading rules v0](09-reading-rules-v0.md) and [10 · Reading master data](10-reading-master-data.md): how the 3+1 answer is computed
 10. [11 · Phase 2 plan](11-phase-2-plan.md): work items for the reading engine
 
-## Questions the backend should help answer
+## Open technical questions
 
 | Topic | Starting proposal | What needs review |
 |---|---|---|
