@@ -69,7 +69,7 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
   - `database_id` values in both `wrangler.toml` files are placeholders (`00000000-…`). Replace with the real IDs before any remote command.
   - `ALLOWED_ORIGINS`, `JWT_ISSUER` and `JWKS_URL` for staging/prod assume `*.maemorkratai.com`, which is not routed yet. For a first deploy on `*.workers.dev`, update those vars to the workers.dev URLs.
   - Deploy admin before client: admin publishes the JWKS the client verifies against.
-  - The owner's Mac is low on disk. A lean local build keeps `target/` near 0.6 GB: `CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0`. `cargo clean` frees it. `worker-build` (needed for `make dev-*` and deploys) is not installed yet.
+  - The owner's Mac is low on disk. A lean local build keeps `target/` near 0.6 GB: `CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0`. `cargo clean` frees it. `worker-build` must stay on 0.8 (`cargo install worker-build@^0.8 --locked`) while the crate is `worker` 0.8; 0.9 refuses to build. Installed on the owner's Mac 2026-11-25; both Worker bundles build.
   - The `/gb-plan`, `/gb-execute`, `/gb-verify` skills named in `CLAUDE.md` are not in the repo (`.claude/skills/` was never committed). Follow `.gb-sdlc/workflows/02`–`04` directly, or recreate the skills before planning SPEC-002.
   - Ingestion scope undecided (`TODO-014`).
 

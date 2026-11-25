@@ -54,7 +54,8 @@ jobs:
         run: cargo test --workspace --locked
 
       - name: Install worker-build
-        run: cargo install worker-build --locked
+        # Pinned to 0.8: worker-build 0.9 refuses the `worker` 0.8 crate this workspace uses.
+        run: cargo install worker-build@^0.8 --locked
 
       - name: Install wrangler
         run: npm install --no-save wrangler@^4

@@ -27,6 +27,8 @@ Run every backend command through `make` from `backend/`. There are no standalon
 | Verify code | `make check`, `make test` |
 | Local dev | `make dev-admin`, `make dev-client` |
 
+Prerequisite for `build-*`, `dev-*` and `deploy-*`: `cargo install worker-build@^0.8 --locked`. worker-build 0.9 requires the `worker` 0.9 crate and fails on this workspace (`worker` 0.8).
+
 Rules: `ENV` is `dev`, `staging` or `prod`; `SERVICE` is `admin` or `client`. If a command is missing, add it to the Makefile with a `## description` comment (that comment is what `make help` prints) and a row here. Do not add loose scripts.
 
 ## One-time setup per environment (staging first, then prod)
