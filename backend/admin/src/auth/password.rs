@@ -46,13 +46,14 @@ async fn derive_pbkdf2_sha256(
         use wasm_bindgen::{JsCast, JsValue};
         use wasm_bindgen_futures::JsFuture;
 
-        let global: web_sys::WorkerGlobalScope = js_sys::global()
-            .dyn_into()
-            .map_err(|_| AppError::internal("failed to acquire WorkerGlobalScope"))?;
-        let subtle = global
-            .crypto()
-            .map_err(|_| AppError::internal("WebCrypto unavailable"))?
-            .subtle();
+        // The Workers runtime global is not an instance of `WorkerGlobalScope`, so a checked
+        // `dyn_into` fails there. Read `globalThis.crypto` directly instead.
+        let crypto_val = Reflect::get(&js_sys::global(), &JsValue::from_str("crypto"))
+            .map_err(|_| AppError::internal("WebCrypto unavailable"))?;
+        if crypto_val.is_undefined() || crypto_val.is_null() {
+            return Err(AppError::internal("WebCrypto unavailable"));
+        }
+        let subtle = crypto_val.unchecked_into::<web_sys::Crypto>().subtle();
 
         let key_bytes = Uint8Array::from(peppered);
         let usages = Array::of1(&JsValue::from_str("deriveBits"));

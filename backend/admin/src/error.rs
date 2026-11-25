@@ -104,6 +104,11 @@ impl AppError {
     }
 
     pub fn into_response_with_request_id(self, request_id: &str) -> Response {
+        if self.status.is_server_error() {
+            if let Some(detail) = &self.internal_detail {
+                log_server_error(request_id, self.code, detail);
+            }
+        }
         let mut response = (
             self.status,
             Json(ErrorEnvelope {
@@ -137,6 +142,16 @@ impl IntoResponse for AppError {
         self.into_response_with_request_id("unassigned")
     }
 }
+
+/// Server-side log for 5xx errors. The detail stays out of the response body;
+/// it only goes to the Worker log (`wrangler tail` / dashboard) with the request id.
+#[cfg(target_arch = "wasm32")]
+fn log_server_error(request_id: &str, code: &str, detail: &str) {
+    worker::console_error!("request_id={request_id} code={code} detail={detail}");
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+fn log_server_error(_request_id: &str, _code: &str, _detail: &str) {}
 
 #[cfg(test)]
 mod tests {

@@ -271,7 +271,8 @@ impl AuthRepo for WorkerEnvAdapter {
             )
             .bind_refs(&[
                 D1Type::Text(&new_session.id),
-                D1Type::Text(&new_session.user_id),
+                // The caller leaves user_id and family_id empty; both come from the session being rotated.
+                D1Type::Text(&existing.user_id),
                 D1Type::Text(&new_session.token_hash),
                 D1Type::Text(&existing.family_id),
                 D1Type::Real(new_session.expires_at as f64),

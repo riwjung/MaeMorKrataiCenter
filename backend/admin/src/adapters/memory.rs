@@ -129,6 +129,7 @@ impl AuthRepo for MemoryStore {
             entry.replaced_by_session_id = Some(new_session.id.clone());
         }
         let mut inserted = new_session;
+        inserted.user_id = existing.user_id.clone();
         inserted.family_id = existing.family_id.clone();
         let new_id = inserted.id.clone();
         sessions.insert(new_id.clone(), inserted);

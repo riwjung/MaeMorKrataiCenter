@@ -360,6 +360,47 @@ fn scenario_4_cookie_policy_refresh_rotation_and_replay_revocation() {
     });
 }
 
+/// Regression (2026-11-25): a rotated session must keep its user, so the
+/// refresh cookie it issues works for the next refresh too.
+#[test]
+fn scenario_4b_rotated_cookie_refreshes_again() {
+    block_on(async {
+        let store = setup_store();
+        let app = build_router(store.into_ports(Environment::Staging));
+
+        let (status, _, set_cookie) =
+            login_as(&app, "admin@maemorkratai.test", "admin-pass-12345").await;
+        assert_eq!(status, StatusCode::OK);
+        let mut cookie_pair = set_cookie.unwrap().split(';').next().unwrap().to_string();
+
+        for round in 1..=3 {
+            let res = app
+                .clone()
+                .oneshot(
+                    Request::post("/v1/auth/refresh")
+                        .header(header::ORIGIN, "https://admin.maemorkratai.test")
+                        .header("x-csrf-protection", "1")
+                        .header(header::COOKIE, &cookie_pair)
+                        .body(Body::empty())
+                        .unwrap(),
+                )
+                .await
+                .unwrap();
+            assert_eq!(res.status(), StatusCode::OK, "refresh round {round}");
+            cookie_pair = res
+                .headers()
+                .get(header::SET_COOKIE)
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .split(';')
+                .next()
+                .unwrap()
+                .to_string();
+        }
+    });
+}
+
 #[test]
 fn scenario_5_jwks_rotation_continuity_and_rs256_readiness() {
     block_on(async {

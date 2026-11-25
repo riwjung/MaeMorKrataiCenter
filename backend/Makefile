@@ -49,8 +49,9 @@ migrate-staging: ## [CLOUD] Apply D1 migrations to staging
 migrate-prod: ## [CLOUD] Apply D1 migrations to prod
 	cd admin && npx wrangler d1 migrations apply DB --env prod --remote
 
+# Runs from admin/: the CLI reads admin/.dev.vars (dev pepper) and calls `wrangler d1 execute DB`, which needs admin/wrangler.toml.
 create-user: ## Create a user. Usage: make create-user EMAIL=a@b.com ROLE=owner ENV=dev
-	cargo run --manifest-path tools/create-user/Cargo.toml -- --email=$(EMAIL) --role=$(ROLE) --env=$(or $(ENV),dev)
+	cd admin && cargo run --manifest-path ../tools/create-user/Cargo.toml -- --email=$(EMAIL) --role=$(ROLE) --env=$(or $(ENV),dev)
 
 # ---- Cloudflare setup & deploy ---------------------------------------------
 
