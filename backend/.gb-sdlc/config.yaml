@@ -31,6 +31,20 @@ agents:
   executor: ".gb-sdlc/agents/executor.md"
   coder: ".gb-sdlc/agents/executor.md" # Alias for executor
   verifier: ".gb-sdlc/agents/verifier.md"
+  plan_estimator: ".gb-sdlc/agents/plan-estimator.md"
+  plan_auditor: ".gb-sdlc/agents/plan-auditor.md"
+
+# Model & effort per role (guardrails/core-rules.md section 12). Added 2026-11-24: the rules referenced
+# `models.*` but the block was missing. Aliases are Claude Code model names; adapt for other harnesses.
+models:
+  scout:            { model: haiku,  effort: low }      # repo lookups, file finding
+  researcher:       { model: sonnet, effort: medium }
+  plan_estimator:   { model: sonnet, effort: medium }
+  planner:          { model: sonnet, effort: high }     # spec complexity: complex -> opus/medium; extreme -> opus/high after the human confirms
+  battleground:     { model: sonnet, effort: medium }
+  plan_auditor:     { model: sonnet, effort: high }
+  executor:         { model: sonnet, effort: medium }   # never opus; haiku/low for mechanical edits
+  verifier:         { model: sonnet, effort: high }
 
 # Skills Configuration (Discovered and loaded by agents during planning & execution)
 skills:
