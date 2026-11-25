@@ -15,7 +15,7 @@ This project follows the `gb-sdlc` Spec-Driven Development framework. The master
 ## Project notes (2026-11-24)
 
 - **Owner**: one person maintains frontend and backend since 2026-11-24. Talk to them in Thai; code, comments, commits and docs stay in English.
-- **Missing skills**: `.claude/skills/gb-plan`, `gb-execute` and `gb-verify` were never committed (they lived on the previous developer's machine). Until they are recreated, follow `.gb-sdlc/workflows/02-planning-battleground.md`, `03-execution-deviation.md` and `04-verification-audit.md` directly, using the presets in `.gb-sdlc/agents/`.
+- **`/gb-plan`, `/gb-execute`, `/gb-verify`**: these are only entry-point names. The procedures are `.gb-sdlc/workflows/02-planning-battleground.md`, `03-execution-deviation.md` and `04-verification-audit.md`, and the roles they spawn are the presets in `.gb-sdlc/agents/` (`plan-estimator`, `planner`, `battleground-contender`, `plan-auditor`, `executor`, `verifier`), written for Gemini (`GEMINI.md`) and shared with every agent. No slash-command wrapper is committed (`.claude/skills/` does not exist here), so when the owner says "gb-plan", run workflow 02 with those presets; likewise 03 for execute and 04 for verify.
 - **Commands**: `make help` lists everything. `make test` and `make check` are local. Targets marked `[CLOUD]` change real Cloudflare state: ask the owner first.
 - **One register**: a single `HANDOFF.md` and `TODO.md` cover both Workers. New proto-spec IDs continue from `TODO-015`; section 0 of `TODO.md` maps the old per-service IDs.
 - **Never commit** `.dev.vars`, secrets, real reader answers, audio or holdout data.

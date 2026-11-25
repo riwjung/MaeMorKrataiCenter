@@ -72,7 +72,7 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
   - Prod: `database_id` is still a placeholder and its vars still assume `*.maemorkratai.com`.
   - Deploy admin before client: admin publishes the JWKS the client verifies against.
   - The owner's Mac is low on disk. A lean local build keeps `target/` near 0.6 GB: `CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0`. `cargo clean` frees it. `worker-build` must stay on 0.8 (`cargo install worker-build@^0.8 --locked`) while the crate is `worker` 0.8; 0.9 refuses to build. Installed on the owner's Mac 2026-11-25; both Worker bundles build.
-  - The `/gb-plan`, `/gb-execute`, `/gb-verify` skills named in `CLAUDE.md` are not in the repo (`.claude/skills/` was never committed). Follow `.gb-sdlc/workflows/02`–`04` directly, or recreate the skills before planning SPEC-002.
+  - `/gb-plan`, `/gb-execute`, `/gb-verify` have no slash-command wrapper in the repo. Their content is `.gb-sdlc/workflows/02`–`04` plus the role presets in `.gb-sdlc/agents/` (written for Gemini); follow those directly.
   - Ingestion scope undecided (`TODO-014`).
 
 ---
