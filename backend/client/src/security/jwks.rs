@@ -178,10 +178,18 @@ pub fn verify_jwt_against_keys(
                 return Err(ClientError::unauthorized("Invalid token."));
             }
             let x = URL_SAFE_NO_PAD
-                .decode(jwk.x.as_deref().ok_or_else(|| ClientError::unauthorized("Invalid token."))?)
+                .decode(
+                    jwk.x
+                        .as_deref()
+                        .ok_or_else(|| ClientError::unauthorized("Invalid token."))?,
+                )
                 .map_err(|_| ClientError::unauthorized("Invalid token."))?;
             let y = URL_SAFE_NO_PAD
-                .decode(jwk.y.as_deref().ok_or_else(|| ClientError::unauthorized("Invalid token."))?)
+                .decode(
+                    jwk.y
+                        .as_deref()
+                        .ok_or_else(|| ClientError::unauthorized("Invalid token."))?,
+                )
                 .map_err(|_| ClientError::unauthorized("Invalid token."))?;
             if x.len() != 32 || y.len() != 32 {
                 return Err(ClientError::unauthorized("Invalid token."));
@@ -205,10 +213,18 @@ pub fn verify_jwt_against_keys(
                 return Err(ClientError::unauthorized("Invalid token."));
             }
             let n_bytes = URL_SAFE_NO_PAD
-                .decode(jwk.n.as_deref().ok_or_else(|| ClientError::unauthorized("Invalid token."))?)
+                .decode(
+                    jwk.n
+                        .as_deref()
+                        .ok_or_else(|| ClientError::unauthorized("Invalid token."))?,
+                )
                 .map_err(|_| ClientError::unauthorized("Invalid token."))?;
             let e_bytes = URL_SAFE_NO_PAD
-                .decode(jwk.e.as_deref().ok_or_else(|| ClientError::unauthorized("Invalid token."))?)
+                .decode(
+                    jwk.e
+                        .as_deref()
+                        .ok_or_else(|| ClientError::unauthorized("Invalid token."))?,
+                )
                 .map_err(|_| ClientError::unauthorized("Invalid token."))?;
             let rsa_pub = RsaPublicKey::new(
                 BigUint::from_bytes_be(&n_bytes),

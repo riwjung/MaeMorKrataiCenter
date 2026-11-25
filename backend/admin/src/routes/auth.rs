@@ -440,7 +440,13 @@ async fn handle_logout(ports: &AppPorts, headers: &HeaderMap) -> Result<Response
         }
     }
 
-    let mut res = (StatusCode::OK, Json(LogoutResponse { status: "logged_out" })).into_response();
+    let mut res = (
+        StatusCode::OK,
+        Json(LogoutResponse {
+            status: "logged_out",
+        }),
+    )
+        .into_response();
     let clear_cookie = format_clear_refresh_cookie(&ports.config);
     if let Ok(val) = HeaderValue::from_str(&clear_cookie) {
         res.headers_mut().append(header::SET_COOKIE, val);

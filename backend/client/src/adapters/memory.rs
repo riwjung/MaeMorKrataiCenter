@@ -34,8 +34,8 @@ impl MemoryClientStore {
                 environment: env,
                 allowed_origins: vec!["https://staging.maemorkratai.com".to_string()],
                 max_body_bytes: 32_768,
-                turnstile_verify_url:
-                    "https://challenges.cloudflare.com/turnstile/v0/siteverify".to_string(),
+                turnstile_verify_url: "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+                    .to_string(),
                 jwks_url: "https://admin-api-staging.maemorkratai.com/.well-known/jwks.json"
                     .to_string(),
                 jwt_issuer: "https://admin-api-staging.maemorkratai.com".to_string(),
@@ -63,7 +63,9 @@ impl HealthPort for MemoryClientStore {
         if self.public_r2_healthy.load(Ordering::SeqCst) {
             Ok(())
         } else {
-            Err(ClientError::service_unavailable("simulated PUBLIC_ASSETS outage"))
+            Err(ClientError::service_unavailable(
+                "simulated PUBLIC_ASSETS outage",
+            ))
         }
     }
 }

@@ -80,7 +80,10 @@ impl AuthRepo for MemoryStore {
     }
 
     async fn insert_session(&self, session: SessionRecord) -> Result<(), AppError> {
-        self.sessions.lock().unwrap().insert(session.id.clone(), session);
+        self.sessions
+            .lock()
+            .unwrap()
+            .insert(session.id.clone(), session);
         Ok(())
     }
 

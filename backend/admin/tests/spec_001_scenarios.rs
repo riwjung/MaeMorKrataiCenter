@@ -10,11 +10,11 @@ use base64::engine::general_purpose::{STANDARD, URL_SAFE_NO_PAD};
 use base64::Engine;
 use p256::pkcs8::EncodePrivateKey;
 use rsa::pkcs1v15::SigningKey as RsaSigningKey;
+use rsa::signature::{SignatureEncoding, Signer};
 use rsa::traits::PublicKeyParts;
 use rsa::RsaPrivateKey;
 use serde_json::Value;
 use sha2::Sha256;
-use rsa::signature::{SignatureEncoding, Signer};
 use std::future::Future;
 use std::pin::pin;
 use std::sync::atomic::Ordering;
@@ -131,7 +131,13 @@ fn scenario_2_health_check_and_degraded_state() {
             .await
             .unwrap();
         assert_eq!(ok_res.status(), StatusCode::OK);
-        assert_eq!(ok_res.headers().get(header::X_CONTENT_TYPE_OPTIONS).unwrap(), "nosniff");
+        assert_eq!(
+            ok_res
+                .headers()
+                .get(header::X_CONTENT_TYPE_OPTIONS)
+                .unwrap(),
+            "nosniff"
+        );
         let ok_json = body_json(ok_res).await;
         assert_eq!(ok_json["d1"], "ok");
         assert_eq!(ok_json["r2"], "ok");
@@ -165,13 +171,7 @@ fn scenario_3_deny_by_default_rbac_hierarchy_and_inactive_user() {
         let admin_jwt = admin_login["access_token"].as_str().unwrap();
 
         // Mint a valid JWT for role=user to verify RBAC enforcement on protected routes
-        let active_key = store
-            .jwks_keys
-            .lock()
-            .unwrap()
-            .first()
-            .unwrap()
-            .clone();
+        let active_key = store.jwks_keys.lock().unwrap().first().unwrap().clone();
         let kek = STANDARD.encode([17u8; 32]);
         let pkcs8 = backend_admin::auth::envelope::decrypt_private_key(
             &kek,
@@ -440,7 +440,8 @@ fn scenario_5_jwks_rotation_continuity_and_rs256_readiness() {
             e: Some(URL_SAFE_NO_PAD.encode(rsa_pub.e().to_bytes_be())),
         };
         let rsa_signer = RsaSigningKey::<Sha256>::new(rsa_priv);
-        let h_b64 = URL_SAFE_NO_PAD.encode(br#"{"alg":"RS256","typ":"JWT","kid":"cf-access-rs256"}"#);
+        let h_b64 =
+            URL_SAFE_NO_PAD.encode(br#"{"alg":"RS256","typ":"JWT","kid":"cf-access-rs256"}"#);
         let c_b64 = URL_SAFE_NO_PAD.encode(
             br#"{"iss":"https://admin-api.maemorkratai.test","aud":"maemorkratai-admin","sub":"u-owner","role":"owner","jti":"jti-rsa","iat":1700000000,"exp":1700000900}"#,
         );
@@ -497,7 +498,10 @@ fn scenario_6_rate_limit_csrf_cors_and_error_sanitization() {
             .await
             .unwrap();
         assert_eq!(bad_origin.status(), StatusCode::FORBIDDEN);
-        assert!(bad_origin.headers().get(header::ACCESS_CONTROL_ALLOW_ORIGIN).is_none());
+        assert!(bad_origin
+            .headers()
+            .get(header::ACCESS_CONTROL_ALLOW_ORIGIN)
+            .is_none());
 
         // Malformed JSON -> 400 sanitized envelope
         let bad_json_res = app

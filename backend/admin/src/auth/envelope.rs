@@ -65,7 +65,9 @@ pub fn decrypt_private_key(
 ) -> Result<Zeroizing<Vec<u8>>, AppError> {
     let parts: Vec<&str> = envelope.split('$').collect();
     if parts.len() != 3 || parts[0] != ENVELOPE_PREFIX {
-        return Err(AppError::internal("unsupported encrypted key envelope format"));
+        return Err(AppError::internal(
+            "unsupported encrypted key envelope format",
+        ));
     }
 
     let nonce_bytes = STANDARD

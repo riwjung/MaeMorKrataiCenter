@@ -74,7 +74,10 @@ fn scenario_2_health_check_and_degraded_d1_or_r2() {
             .unwrap();
         assert_eq!(ok_res.status(), StatusCode::OK);
         assert_eq!(
-            ok_res.headers().get(header::X_CONTENT_TYPE_OPTIONS).unwrap(),
+            ok_res
+                .headers()
+                .get(header::X_CONTENT_TYPE_OPTIONS)
+                .unwrap(),
             "nosniff"
         );
         let ok_json = body_json(ok_res).await;
@@ -89,7 +92,10 @@ fn scenario_2_health_check_and_degraded_d1_or_r2() {
         assert_eq!(bad_res.status(), StatusCode::SERVICE_UNAVAILABLE);
         let bad_json = body_json(bad_res).await;
         assert_eq!(bad_json["code"], "SERVICE_UNAVAILABLE");
-        assert!(!bad_json["message"].as_str().unwrap().contains("PUBLIC_ASSETS"));
+        assert!(!bad_json["message"]
+            .as_str()
+            .unwrap()
+            .contains("PUBLIC_ASSETS"));
     });
 }
 
@@ -276,7 +282,10 @@ fn scenario_5_jwks_verifier_supports_es256_and_rs256_and_fails_closed() {
         let ec_verified = verifier.verify_bearer_token(&ports, &ec_jwt).await.unwrap();
         assert_eq!(ec_verified.sub, "cust-1");
 
-        let rsa_verified = verifier.verify_bearer_token(&ports, &rsa_jwt).await.unwrap();
+        let rsa_verified = verifier
+            .verify_bearer_token(&ports, &rsa_jwt)
+            .await
+            .unwrap();
         assert_eq!(rsa_verified.sub, "cust-1");
 
         // Expired token -> 401
@@ -286,13 +295,19 @@ fn scenario_5_jwks_verifier_supports_es256_and_rs256_and_fails_closed() {
         let exp_input = format!("{ec_header}.{exp_claims}");
         let exp_sig: P256Signature = ec_sk.sign(exp_input.as_bytes());
         let exp_jwt = format!("{exp_input}.{}", URL_SAFE_NO_PAD.encode(exp_sig.to_bytes()));
-        let exp_err = verifier.verify_bearer_token(&ports, &exp_jwt).await.unwrap_err();
+        let exp_err = verifier
+            .verify_bearer_token(&ports, &exp_jwt)
+            .await
+            .unwrap_err();
         assert_eq!(exp_err.status, StatusCode::UNAUTHORIZED);
 
         // Algorithm confusion (alg: none) -> 401
         let none_header = URL_SAFE_NO_PAD.encode(br#"{"alg":"none","typ":"JWT","kid":"ec-1"}"#);
         let forged = format!("{none_header}.{valid_claims}.");
-        let forged_err = verifier.verify_bearer_token(&ports, &forged).await.unwrap_err();
+        let forged_err = verifier
+            .verify_bearer_token(&ports, &forged)
+            .await
+            .unwrap_err();
         assert_eq!(forged_err.status, StatusCode::UNAUTHORIZED);
     });
 }

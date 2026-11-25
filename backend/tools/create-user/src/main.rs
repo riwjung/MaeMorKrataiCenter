@@ -68,7 +68,11 @@ fn validate_email(email: &str) -> Result<(), String> {
     if email.len() < 5 || email.len() > 254 {
         return Err("Invalid email length".to_string());
     }
-    if email.contains('\'') || email.contains('"') || email.contains(';') || email.chars().any(char::is_whitespace) {
+    if email.contains('\'')
+        || email.contains('"')
+        || email.contains(';')
+        || email.chars().any(char::is_whitespace)
+    {
         return Err("Invalid characters in email".to_string());
     }
     let Some((local, domain)) = email.split_once('@') else {
@@ -80,7 +84,11 @@ fn validate_email(email: &str) -> Result<(), String> {
     Ok(())
 }
 
-fn read_secret_value(prompt: &str, env_key: Option<&str>, allow_dev_vars: bool) -> Result<String, String> {
+fn read_secret_value(
+    prompt: &str,
+    env_key: Option<&str>,
+    allow_dev_vars: bool,
+) -> Result<String, String> {
     if let Some(key) = env_key {
         if let Ok(val) = env::var(key) {
             if !val.trim().is_empty() {
@@ -120,7 +128,11 @@ fn read_secret_value(prompt: &str, env_key: Option<&str>, allow_dev_vars: bool) 
     }
 }
 
-fn hash_password_peppered(password: &str, pepper: &str, salt: &[u8; SALT_LEN]) -> Result<String, String> {
+fn hash_password_peppered(
+    password: &str,
+    pepper: &str,
+    salt: &[u8; SALT_LEN],
+) -> Result<String, String> {
     if password.len() < 12 {
         return Err("Password must be at least 12 characters".to_string());
     }
@@ -143,7 +155,13 @@ fn hash_password_peppered(password: &str, pepper: &str, salt: &[u8; SALT_LEN]) -
     ))
 }
 
-fn build_insert_sql(id: &str, email: &str, password_hash: &str, role: &str, now_secs: u64) -> String {
+fn build_insert_sql(
+    id: &str,
+    email: &str,
+    password_hash: &str,
+    role: &str,
+    now_secs: u64,
+) -> String {
     format!(
         "INSERT INTO users (id, email, password_hash, role, is_active, created_at, updated_at) VALUES ('{id}', '{email}', '{password_hash}', '{role}', 1, {now_secs}, {now_secs});"
     )
@@ -170,7 +188,13 @@ fn run() -> Result<(), String> {
         .map_err(|e| format!("System clock error: {e}"))?
         .as_secs();
 
-    let sql = build_insert_sql(&user_id, &parsed.email, &password_hash, &parsed.role, now_secs);
+    let sql = build_insert_sql(
+        &user_id,
+        &parsed.email,
+        &password_hash,
+        &parsed.role,
+        now_secs,
+    );
 
     let mut cmd = Command::new("npx");
     cmd.args(["wrangler", "d1", "execute", "DB"]);

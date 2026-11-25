@@ -108,7 +108,9 @@ impl TurnstileGuard {
         remoteip: Option<String>,
     ) -> Result<(), ClientError> {
         let Some(clean_token) = token.map(str::trim).filter(|t| !t.is_empty()) else {
-            return Err(ClientError::forbidden("Turnstile verification token required."));
+            return Err(ClientError::forbidden(
+                "Turnstile verification token required.",
+            ));
         };
 
         let secret = ports.secrets.turnstile_secret()?;
@@ -228,10 +230,16 @@ mod tests {
             let ports = MemoryClientStore::new().into_ports(Environment::Staging);
 
             let pass_guard = TurnstileGuard::new(Arc::new(FixtureTransport(FixtureOutcome::Pass)));
-            assert!(pass_guard.verify_token(&ports, Some("valid-tok"), None).await.is_ok());
+            assert!(pass_guard
+                .verify_token(&ports, Some("valid-tok"), None)
+                .await
+                .is_ok());
 
             // Missing token -> 403
-            let missing_err = pass_guard.verify_token(&ports, None, None).await.unwrap_err();
+            let missing_err = pass_guard
+                .verify_token(&ports, None, None)
+                .await
+                .unwrap_err();
             assert_eq!(missing_err.status, axum::http::StatusCode::FORBIDDEN);
 
             // Invalid token -> 403
@@ -250,7 +258,10 @@ mod tests {
                 .verify_token(&ports, Some("valid-tok"), None)
                 .await
                 .unwrap_err();
-            assert_eq!(outage_err.status, axum::http::StatusCode::SERVICE_UNAVAILABLE);
+            assert_eq!(
+                outage_err.status,
+                axum::http::StatusCode::SERVICE_UNAVAILABLE
+            );
         });
     }
 }

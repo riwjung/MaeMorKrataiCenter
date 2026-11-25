@@ -44,6 +44,7 @@ async fn fetch(
     let axum_req = req.map(axum::body::Body::new);
     match router.call(axum_req).await {
         Ok(resp) => Ok(resp),
-        Err(_) => Ok(ClientError::internal("router dispatch failure").into_response_with_request_id("dispatch")),
+        Err(_) => Ok(ClientError::internal("router dispatch failure")
+            .into_response_with_request_id("dispatch")),
     }
 }

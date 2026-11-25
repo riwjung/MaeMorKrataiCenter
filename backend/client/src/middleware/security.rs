@@ -67,8 +67,8 @@ pub async fn security_pipeline_middleware(
                 return res;
             }
         }
-        let mut res = ClientError::forbidden("Origin not allowed.")
-            .into_response_with_request_id(&req_id);
+        let mut res =
+            ClientError::forbidden("Origin not allowed.").into_response_with_request_id(&req_id);
         apply_security_headers(&mut res, &req_id, true);
         return res;
     }
@@ -80,7 +80,11 @@ pub async fn security_pipeline_middleware(
         return res;
     }
 
-    let rate_key = format!("global:{}:{}", req.uri().path(), client_ip_from_headers(req.headers()));
+    let rate_key = format!(
+        "global:{}:{}",
+        req.uri().path(),
+        client_ip_from_headers(req.headers())
+    );
     match ports.rate_limiter.check_limit(&rate_key).await {
         Ok(true) => {}
         Ok(false) => {

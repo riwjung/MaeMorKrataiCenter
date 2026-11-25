@@ -68,7 +68,8 @@ pub async fn request_id_and_headers_middleware(
                 return res;
             }
         }
-        let mut res = AppError::forbidden("Origin not allowed.").into_response_with_request_id(&req_id);
+        let mut res =
+            AppError::forbidden("Origin not allowed.").into_response_with_request_id(&req_id);
         apply_security_headers(&mut res, &req_id, true);
         return res;
     }
@@ -88,8 +89,8 @@ pub async fn request_id_and_headers_middleware(
         if let Ok(cl_str) = cl_val.to_str() {
             if let Ok(len) = cl_str.trim().parse::<usize>() {
                 if len > max_bytes {
-                    let mut res = AppError::payload_too_large()
-                        .into_response_with_request_id(&req_id);
+                    let mut res =
+                        AppError::payload_too_large().into_response_with_request_id(&req_id);
                     if origin_allowed {
                         if let Some(ref orig) = origin {
                             apply_cors_headers(&mut res, orig);
@@ -106,8 +107,7 @@ pub async fn request_id_and_headers_middleware(
     let buffered = match axum::body::to_bytes(body, max_bytes).await {
         Ok(b) => b,
         Err(_) => {
-            let mut res =
-                AppError::payload_too_large().into_response_with_request_id(&req_id);
+            let mut res = AppError::payload_too_large().into_response_with_request_id(&req_id);
             if origin_allowed {
                 if let Some(ref orig) = origin {
                     apply_cors_headers(&mut res, orig);
