@@ -47,11 +47,12 @@ jobs:
       - name: Cargo test
         run: cargo test --workspace --locked
 
-      # Advisory until TODO-006 (clippy cast cleanup) lands and the tree is formatted.
-      - name: Rustfmt (advisory)
-        continue-on-error: true
+      # Blocking since 2026-11-24 (TODO-006 item 1): the tree is formatted and clippy-clean on host and wasm32.
+      - name: Rustfmt
         run: cargo fmt --all --check
 
-      - name: Clippy (advisory)
-        continue-on-error: true
+      - name: Clippy (host, all targets incl. tests and create-user)
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+      - name: Clippy (wasm32, workers only)
         run: cargo clippy --workspace --exclude create-user --target wasm32-unknown-unknown --locked -- -D warnings

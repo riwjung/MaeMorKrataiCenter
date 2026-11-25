@@ -57,13 +57,7 @@ async fn derive_pbkdf2_sha256(
         let key_bytes = Uint8Array::from(peppered);
         let usages = Array::of1(&JsValue::from_str("deriveBits"));
         let key_promise = subtle
-            .import_key_with_str(
-                "raw",
-                key_bytes.as_ref(),
-                "PBKDF2",
-                false,
-                usages.as_ref(),
-            )
+            .import_key_with_str("raw", key_bytes.as_ref(), "PBKDF2", false, usages.as_ref())
             .map_err(|_| AppError::internal("WebCrypto importKey failed"))?;
         let crypto_key: web_sys::CryptoKey = JsFuture::from(key_promise)
             .await
@@ -73,12 +67,24 @@ async fn derive_pbkdf2_sha256(
 
         let salt_arr = Uint8Array::from(salt);
         let params = Object::new();
-        Reflect::set(&params, &JsValue::from_str("name"), &JsValue::from_str("PBKDF2"))
-            .map_err(|_| AppError::internal("failed to build Pbkdf2Params"))?;
-        Reflect::set(&params, &JsValue::from_str("hash"), &JsValue::from_str("SHA-256"))
-            .map_err(|_| AppError::internal("failed to set hash"))?;
-        Reflect::set(&params, &JsValue::from_str("iterations"), &JsValue::from_f64(f64::from(iterations)))
-            .map_err(|_| AppError::internal("failed to set iterations"))?;
+        Reflect::set(
+            &params,
+            &JsValue::from_str("name"),
+            &JsValue::from_str("PBKDF2"),
+        )
+        .map_err(|_| AppError::internal("failed to build Pbkdf2Params"))?;
+        Reflect::set(
+            &params,
+            &JsValue::from_str("hash"),
+            &JsValue::from_str("SHA-256"),
+        )
+        .map_err(|_| AppError::internal("failed to set hash"))?;
+        Reflect::set(
+            &params,
+            &JsValue::from_str("iterations"),
+            &JsValue::from_f64(f64::from(iterations)),
+        )
+        .map_err(|_| AppError::internal("failed to set iterations"))?;
         Reflect::set(&params, &JsValue::from_str("salt"), salt_arr.as_ref())
             .map_err(|_| AppError::internal("failed to set salt"))?;
 
@@ -119,7 +125,9 @@ pub async fn verify_password(
 ) -> Result<bool, AppError> {
     let parts: Vec<&str> = stored_hash.split('$').collect();
     if parts.len() != 5 || !parts[0].is_empty() || parts[1] != PREFIX {
-        return Err(AppError::internal("unsupported stored password hash format"));
+        return Err(AppError::internal(
+            "unsupported stored password hash format",
+        ));
     }
 
     let iter_str = parts[2]
@@ -153,15 +161,16 @@ mod tests {
 
     #[test]
     fn roundtrip_and_cli_vector_match() {
-        let rt = tokio_less_block_on(async {
+        tokio_less_block_on(async {
             let pepper = "dev-pepper-secret";
             let pw = "correct-horse-battery-staple";
             let hashed = hash_password(pw, pepper).await.unwrap();
             assert!(verify_password(pw, &hashed, pepper).await.unwrap());
-            assert!(!verify_password("wrong-password", &hashed, pepper).await.unwrap());
+            assert!(!verify_password("wrong-password", &hashed, pepper)
+                .await
+                .unwrap());
             assert!(!verify_password(pw, &hashed, "wrong-pepper").await.unwrap());
         });
-        rt
     }
 
     fn tokio_less_block_on<F: std::future::Future>(fut: F) -> F::Output {

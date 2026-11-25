@@ -107,7 +107,9 @@ impl HealthPort for WorkerClientAdapter {
         })?);
         SendFuture::new(bucket.head("__health_probe__"))
             .await
-            .map_err(|e| ClientError::service_unavailable(format!("PUBLIC_ASSETS probe error: {e}")))?;
+            .map_err(|e| {
+                ClientError::service_unavailable(format!("PUBLIC_ASSETS probe error: {e}"))
+            })?;
         Ok(())
     }
 }
@@ -138,6 +140,6 @@ impl SecretProvider for WorkerClientAdapter {
 
 impl Clock for WorkerClientAdapter {
     fn now_secs(&self) -> u64 {
-        (worker::Date::now().as_millis() / 1000) as u64
+        worker::Date::now().as_millis() / 1000
     }
 }

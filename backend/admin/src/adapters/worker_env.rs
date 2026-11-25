@@ -119,7 +119,6 @@ struct DbUserRow {
 struct DbSessionRow {
     id: String,
     user_id: String,
-    token_hash: String,
     family_id: String,
     expires_at: i64,
     revoked_at: Option<i64>,
@@ -177,7 +176,9 @@ impl AuthRepo for WorkerEnvAdapter {
     async fn find_user_by_id(&self, user_id: &str) -> Result<Option<UserRecord>, AppError> {
         let db = self.db()?;
         let stmt = db
-            .prepare("SELECT id, email, password_hash, role, is_active FROM users WHERE id = ?1 LIMIT 1")
+            .prepare(
+                "SELECT id, email, password_hash, role, is_active FROM users WHERE id = ?1 LIMIT 1",
+            )
             .bind_refs(&[D1Type::Text(user_id)])
             .map_err(|e| AppError::internal(format!("D1 bind error: {e}")))?;
         let row: Option<DbUserRow> = SendFuture::new(stmt.first(None))
@@ -216,7 +217,7 @@ impl AuthRepo for WorkerEnvAdapter {
         let db = self.db()?;
         let find_stmt = db
             .prepare(
-                "SELECT id, user_id, token_hash, family_id, expires_at, revoked_at, replaced_by_session_id FROM sessions WHERE token_hash = ?1 LIMIT 1",
+                "SELECT id, user_id, family_id, expires_at, revoked_at, replaced_by_session_id FROM sessions WHERE token_hash = ?1 LIMIT 1",
             )
             .bind_refs(&[D1Type::Text(token_hash)])
             .map_err(|e| AppError::internal(format!("D1 bind error: {e}")))?;
@@ -236,9 +237,9 @@ impl AuthRepo for WorkerEnvAdapter {
                     D1Type::Text(&existing.family_id),
                 ])
                 .map_err(|e| AppError::internal(format!("D1 bind error: {e}")))?;
-            SendFuture::new(revoke_family.run())
-                .await
-                .map_err(|e| AppError::service_unavailable(format!("D1 family revoke failed: {e}")))?;
+            SendFuture::new(revoke_family.run()).await.map_err(|e| {
+                AppError::service_unavailable(format!("D1 family revoke failed: {e}"))
+            })?;
             return Ok(RefreshOutcome::Replayed {
                 user_id: existing.user_id,
                 family_id: existing.family_id,
@@ -307,7 +308,7 @@ impl AuthRepo for WorkerEnvAdapter {
     ) -> Result<Option<String>, AppError> {
         let db = self.db()?;
         let find_stmt = db
-            .prepare("SELECT id, user_id, token_hash, family_id, expires_at, revoked_at, replaced_by_session_id FROM sessions WHERE token_hash = ?1 LIMIT 1")
+            .prepare("SELECT id, user_id, family_id, expires_at, revoked_at, replaced_by_session_id FROM sessions WHERE token_hash = ?1 LIMIT 1")
             .bind_refs(&[D1Type::Text(token_hash)])
             .map_err(|e| AppError::internal(format!("D1 bind error: {e}")))?;
         let found: Option<DbSessionRow> = SendFuture::new(find_stmt.first(None))
@@ -332,9 +333,9 @@ impl AuthRepo for WorkerEnvAdapter {
             .prepare("UPDATE sessions SET revoked_at = COALESCE(revoked_at, ?1) WHERE user_id = ?2")
             .bind_refs(&[D1Type::Real(now_secs as f64), D1Type::Text(user_id)])
             .map_err(|e| AppError::internal(format!("D1 bind error: {e}")))?;
-        SendFuture::new(stmt.run())
-            .await
-            .map_err(|e| AppError::service_unavailable(format!("D1 revoke user sessions failed: {e}")))?;
+        SendFuture::new(stmt.run()).await.map_err(|e| {
+            AppError::service_unavailable(format!("D1 revoke user sessions failed: {e}"))
+        })?;
         Ok(())
     }
 
@@ -381,9 +382,8 @@ impl AuthRepo for WorkerEnvAdapter {
         audit: AuditEventInput,
     ) -> Result<(), AppError> {
         let db = self.db()?;
-        let retire_stmt = db.prepare(
-            "UPDATE jwks_keys SET status = 'retiring' WHERE status = 'active'",
-        );
+        let retire_stmt =
+            db.prepare("UPDATE jwks_keys SET status = 'retiring' WHERE status = 'active'");
         let insert_stmt = db
             .prepare(
                 "INSERT INTO jwks_keys (kid, alg, public_jwk_json, encrypted_private_key, status, created_at, expires_at) VALUES (?1, ?2, ?3, ?4, 'active', ?5, NULL)",
@@ -421,7 +421,9 @@ impl AuthRepo for WorkerEnvAdapter {
 
         SendFuture::new(db.batch(vec![retire_stmt, insert_stmt, audit_stmt]))
             .await
-            .map_err(|e| AppError::service_unavailable(format!("D1 key rotation batch failed: {e}")))?;
+            .map_err(|e| {
+                AppError::service_unavailable(format!("D1 key rotation batch failed: {e}"))
+            })?;
         Ok(())
     }
 
@@ -458,22 +460,22 @@ impl AuthRepo for WorkerEnvAdapter {
 #[async_trait]
 impl StorageProbe for WorkerEnvAdapter {
     async fn check_r2_bindings(&self) -> Result<(), AppError> {
-        let public_bucket = SendWrapper::new(
-            self.env
-                .bucket("PUBLIC_ASSETS")
-                .map_err(|e| AppError::service_unavailable(format!("PUBLIC_ASSETS unavailable: {e}")))?,
-        );
-        let private_bucket = SendWrapper::new(
-            self.env
-                .bucket("PRIVATE_STORAGE")
-                .map_err(|e| AppError::service_unavailable(format!("PRIVATE_STORAGE unavailable: {e}")))?,
-        );
+        let public_bucket = SendWrapper::new(self.env.bucket("PUBLIC_ASSETS").map_err(|e| {
+            AppError::service_unavailable(format!("PUBLIC_ASSETS unavailable: {e}"))
+        })?);
+        let private_bucket = SendWrapper::new(self.env.bucket("PRIVATE_STORAGE").map_err(|e| {
+            AppError::service_unavailable(format!("PRIVATE_STORAGE unavailable: {e}"))
+        })?);
         SendFuture::new(public_bucket.head("__health_probe__"))
             .await
-            .map_err(|e| AppError::service_unavailable(format!("PUBLIC_ASSETS probe error: {e}")))?;
+            .map_err(|e| {
+                AppError::service_unavailable(format!("PUBLIC_ASSETS probe error: {e}"))
+            })?;
         SendFuture::new(private_bucket.head("__health_probe__"))
             .await
-            .map_err(|e| AppError::service_unavailable(format!("PRIVATE_STORAGE probe error: {e}")))?;
+            .map_err(|e| {
+                AppError::service_unavailable(format!("PRIVATE_STORAGE probe error: {e}"))
+            })?;
         Ok(())
     }
 }
@@ -511,6 +513,6 @@ impl SecretStore for WorkerEnvAdapter {
 
 impl Clock for WorkerEnvAdapter {
     fn now_secs(&self) -> u64 {
-        (worker::Date::now().as_millis() / 1000) as u64
+        worker::Date::now().as_millis() / 1000
     }
 }

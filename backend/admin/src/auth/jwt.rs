@@ -172,8 +172,8 @@ pub fn verify_jwt_with_jwks(
     let header_bytes = URL_SAFE_NO_PAD
         .decode(header_b64)
         .map_err(|_| AppError::unauthorized("invalid token"))?;
-    let header: JwtHeader =
-        serde_json::from_slice(&header_bytes).map_err(|_| AppError::unauthorized("invalid token"))?;
+    let header: JwtHeader = serde_json::from_slice(&header_bytes)
+        .map_err(|_| AppError::unauthorized("invalid token"))?;
 
     if header.alg != "ES256" && header.alg != "RS256" {
         return Err(AppError::unauthorized("invalid token"));
@@ -198,10 +198,18 @@ pub fn verify_jwt_with_jwks(
                 return Err(AppError::unauthorized("invalid token"));
             }
             let x = URL_SAFE_NO_PAD
-                .decode(jwk.x.as_deref().ok_or_else(|| AppError::unauthorized("invalid token"))?)
+                .decode(
+                    jwk.x
+                        .as_deref()
+                        .ok_or_else(|| AppError::unauthorized("invalid token"))?,
+                )
                 .map_err(|_| AppError::unauthorized("invalid token"))?;
             let y = URL_SAFE_NO_PAD
-                .decode(jwk.y.as_deref().ok_or_else(|| AppError::unauthorized("invalid token"))?)
+                .decode(
+                    jwk.y
+                        .as_deref()
+                        .ok_or_else(|| AppError::unauthorized("invalid token"))?,
+                )
                 .map_err(|_| AppError::unauthorized("invalid token"))?;
             if x.len() != 32 || y.len() != 32 {
                 return Err(AppError::unauthorized("invalid token"));
@@ -225,10 +233,18 @@ pub fn verify_jwt_with_jwks(
                 return Err(AppError::unauthorized("invalid token"));
             }
             let n_bytes = URL_SAFE_NO_PAD
-                .decode(jwk.n.as_deref().ok_or_else(|| AppError::unauthorized("invalid token"))?)
+                .decode(
+                    jwk.n
+                        .as_deref()
+                        .ok_or_else(|| AppError::unauthorized("invalid token"))?,
+                )
                 .map_err(|_| AppError::unauthorized("invalid token"))?;
             let e_bytes = URL_SAFE_NO_PAD
-                .decode(jwk.e.as_deref().ok_or_else(|| AppError::unauthorized("invalid token"))?)
+                .decode(
+                    jwk.e
+                        .as_deref()
+                        .ok_or_else(|| AppError::unauthorized("invalid token"))?,
+                )
                 .map_err(|_| AppError::unauthorized("invalid token"))?;
             let rsa_pub = RsaPublicKey::new(
                 BigUint::from_bytes_be(&n_bytes),
@@ -247,8 +263,8 @@ pub fn verify_jwt_with_jwks(
     let claims_bytes = URL_SAFE_NO_PAD
         .decode(claims_b64)
         .map_err(|_| AppError::unauthorized("invalid token"))?;
-    let claims: AccessClaims =
-        serde_json::from_slice(&claims_bytes).map_err(|_| AppError::unauthorized("invalid token"))?;
+    let claims: AccessClaims = serde_json::from_slice(&claims_bytes)
+        .map_err(|_| AppError::unauthorized("invalid token"))?;
 
     if claims.iss != expected_iss || claims.aud != expected_aud {
         return Err(AppError::unauthorized("invalid token"));
@@ -284,7 +300,7 @@ mod tests {
         let token = sign_es256_jwt(&kp.kid, &kp.pkcs8_private_der, &claims).unwrap();
         let verified = verify_jwt_with_jwks(
             &token,
-            &[kp.public_jwk.clone()],
+            std::slice::from_ref(&kp.public_jwk),
             "https://issuer.test",
             "admin",
             1500,
@@ -307,9 +323,8 @@ mod tests {
     #[test]
     fn rejects_alg_none_and_hs256_confusion() {
         let kp = generate_es256_keypair().unwrap();
-        let header = URL_SAFE_NO_PAD.encode(
-            format!(r#"{{"alg":"none","typ":"JWT","kid":"{}"}}"#, kp.kid).as_bytes(),
-        );
+        let header = URL_SAFE_NO_PAD
+            .encode(format!(r#"{{"alg":"none","typ":"JWT","kid":"{}"}}"#, kp.kid).as_bytes());
         let claims = URL_SAFE_NO_PAD.encode(
             br#"{"iss":"https://issuer.test","aud":"admin","sub":"u1","role":"owner","jti":"j1","iat":1,"exp":9999999999}"#,
         );

@@ -19,6 +19,8 @@ pub struct RequireAdmin(pub AuthenticatedCaller);
 #[derive(Debug, Clone)]
 pub struct RequireOwner(pub AuthenticatedCaller);
 
+// The error is the extractor's axum rejection (`Response`); boxing it would only be unboxed again in `from_request_parts`.
+#[allow(clippy::result_large_err)]
 async fn authenticate_from_parts(
     parts: &Parts,
     ports: &AppPorts,
@@ -65,16 +67,18 @@ async fn authenticate_from_parts(
     let user = match ports.repo.find_user_by_id(&claims.sub).await {
         Ok(Some(u)) => u,
         Ok(None) => {
-            return Err(AppError::unauthorized("Invalid token.")
-                .into_response_with_request_id(&req_id));
+            return Err(
+                AppError::unauthorized("Invalid token.").into_response_with_request_id(&req_id)
+            );
         }
         Err(err) => return Err(err.into_response_with_request_id(&req_id)),
     };
 
     if !user.is_active {
         let _ = ports.repo.revoke_user_sessions(&user.id, now).await;
-        return Err(AppError::forbidden("Account is inactive.")
-            .into_response_with_request_id(&req_id));
+        return Err(
+            AppError::forbidden("Account is inactive.").into_response_with_request_id(&req_id)
+        );
     }
 
     if user.role < min_role || claims.role < min_role {
