@@ -9,11 +9,11 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 
 ## 1. Executive Summary & Progress
 
-- **Project Status**: `PLANNING` (SPEC-002 approved, not planned) · Phase 0 solo cleanup done locally, not committed yet
-- **Last Updated**: 2026-11-24
+- **Project Status**: `PLANNING` (SPEC-002 approved, not planned) · staging deployed 2026-11-25
+- **Last Updated**: 2026-11-25
 - **Owner**: the project owner, alone since 2026-11-24 (frontend and backend). The scaffold was built by a friend who has stopped.
 - **Active Session Agent**: Developer + Claude Code
-- **Progress Snapshot**: Both Workers exist; all 23 tests pass and both build for wasm32 on the owner's Mac (2026-11-24). `admin` has complete auth (SPEC-001). `client` serves only `/health`. Nothing is deployed: no Cloudflare resources, secrets or domain yet.
+- **Progress Snapshot**: Both Workers exist; all 23 tests pass and both build for wasm32 on the owner's Mac (2026-11-24). `admin` has complete auth (SPEC-001). `client` serves only `/health`. Staging runs on `*.workers.dev` with D1 (no R2 yet); prod is not deployed and there is no custom domain.
 
 ### Milestone Checklist
 - [x] SPEC-001 infra scaffold, both services, verified and OWASP-audited (2026-11-16)
@@ -21,7 +21,7 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 - [x] Cloudflare deploy prep: Makefile targets, `backend-ci` and manual `backend-deploy` workflows, `docs/deployment.md` (2026-11-20)
 - [x] SPEC-002 master data approved, Spectre audit passed in 3 rounds; API contracts v0.2.0 drafted (2026-11-21)
 - [x] Phase 0: local toolchain, `make test` / `make check`, rustfmt + clippy clean (CI now blocking), docs updated for solo ownership, one HANDOFF/TODO (2026-11-24, awaiting commit)
-- [ ] First staging deploy on `*.workers.dev`
+- [x] First staging deploy on `*.workers.dev` (2026-11-25): login, `/v1/me`, JWKS and refresh rotation verified live; `/health` 503 until R2 is enabled
 - [ ] SPEC-002 implemented and the frontend reading master data from the API
 - [ ] 3+1 reading engine (`TODO-003`)
 
@@ -39,7 +39,8 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
   - Database / Storage: Cloudflare D1 shared by both Workers (one per env); R2 `PUBLIC_ASSETS` (both) and `PRIVATE_STORAGE` (admin only).
   - Pattern: ports (`ports.rs` traits) + adapters (`adapters/worker_env.rs` real, `adapters/memory.rs` for tests).
 - **Verification Status**:
-  - Tests: `cargo test --workspace --locked` 23/23 on 2026-11-24 (Rust 1.100): admin 7 lib + 5 scenarios, client 3 lib + 5 scenarios, create-user 3. Same counts as the SPEC-001 record (admin 15, client 8). `make check` (wasm32) clean.
+  - Tests: `cargo test --workspace --locked` 24/24 on 2026-11-25 (Rust 1.100): admin 7 lib + 6 scenarios, client 3 lib + 5 scenarios, create-user 3. `make check` (wasm32) clean.
+  - Host tests use the pure-Rust PBKDF2 path and the in-memory store, so they cannot catch wasm-only or D1-only bugs. Run the local Worker (`make dev-admin`) and the login/refresh smoke test before deploying.
   - Security Audit: `PASSED` (OWASP A01–A10, both services, 2026-11-16).
   - Rustfmt / clippy: clean on host (`--all-targets`) and wasm32 with `-D warnings`; blocking in CI since 2026-11-24.
 
@@ -57,17 +58,18 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 ## 4. Leftovers, Blockers & Next Steps
 
 ### Immediate Next Steps (For Next Agent / Developer)
-1. [ ] Commit Phase 0 (docs, HANDOFF/TODO merge, fmt/clippy fixes, blocking CI) and check the first `backend-ci` run on GitHub.
+1. [ ] Enable R2 on the Cloudflare account (needs a payment method; free tier), run `make cf-bootstrap`-style bucket creation for staging, restore the commented `r2_buckets` blocks in both `wrangler.toml`, redeploy. `/health` should then return 200.
 2. [ ] Review API contracts v0.2.0 against `frontend-client` (English keys D08, nullable love-status texts and uncategorized lists D09/D10). No second approver any more; review against the frontend code.
-3. [ ] First staging deploy, following `docs/deployment.md` one-time setup (`make cf-bootstrap ENV=staging`, secrets, `make migrate-staging`, `make create-user`, `make deploy-staging`). Changes real Cloudflare state: owner approves first.
+3. [ ] Replace the Turnstile always-pass test secret on staging client with a real widget secret before any route uses Turnstile.
 4. [ ] Plan SPEC-002. Owner decision pending: build it whole (36 admin operations) or ship the 4 public GETs + seed first and the admin CRUD later.
 5. [ ] Then the 3+1 reading engine (`TODO-003`).
 
 ### Leftovers & Technical Nuances
 - **Leftover Tasks**: `TODO-006` items 2–5 (HTTPS URL guard, redacted security logs, login timing parity, `cargo-audit`).
 - **Known Blockers / Warnings**:
-  - `database_id` values in both `wrangler.toml` files are placeholders (`00000000-…`). Replace with the real IDs before any remote command.
-  - `ALLOWED_ORIGINS`, `JWT_ISSUER` and `JWKS_URL` for staging/prod assume `*.maemorkratai.com`, which is not routed yet. For a first deploy on `*.workers.dev`, update those vars to the workers.dev URLs.
+  - Staging: D1 `maemorkratai-db-staging` (`f920237f-…`, APAC); Workers `https://maemorkratai-backend-admin-staging.maemorkratai.workers.dev` and `https://maemorkratai-backend-client-staging.maemorkratai.workers.dev`. `JWT_ISSUER` / `JWKS_URL` point at the admin workers.dev URL. Secrets are set; the owner keeps the generated values (pepper, KEK, owner password) in a private file outside the repo.
+  - Staging has no R2 bindings (R2 not enabled on the account); the blocks are commented in both `wrangler.toml`.
+  - Prod: `database_id` is still a placeholder and its vars still assume `*.maemorkratai.com`.
   - Deploy admin before client: admin publishes the JWKS the client verifies against.
   - The owner's Mac is low on disk. A lean local build keeps `target/` near 0.6 GB: `CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0`. `cargo clean` frees it. `worker-build` must stay on 0.8 (`cargo install worker-build@^0.8 --locked`) while the crate is `worker` 0.8; 0.9 refuses to build. Installed on the owner's Mac 2026-11-25; both Worker bundles build.
   - The `/gb-plan`, `/gb-execute`, `/gb-verify` skills named in `CLAUDE.md` are not in the repo (`.claude/skills/` was never committed). Follow `.gb-sdlc/workflows/02`–`04` directly, or recreate the skills before planning SPEC-002.
@@ -103,4 +105,5 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 | 2026-11-16 | SPEC-001 executed and verified: admin 15/15 tests, client 8/8, OWASP audit passed; plan records archived |
 | 2026-11-20 | Repos merged into `backend/`; Cloudflare deploy prep (Makefile, CI, deploy workflow, runbook) |
 | 2026-11-21 | SPEC-002 approved after 3 Spectre rounds; D05–D10; contracts v0.2.0; `TODO-010`, `TODO-011` |
+| 2026-11-25 | Local run of the admin Worker found two bugs the host tests could not see: wasm PBKDF2 failed (`WorkerGlobalScope` cast) so login never worked on Workers, and refresh rotation inserted an empty `user_id` (FK failure). Both fixed, regression test added (24 tests). 5xx details now logged server-side. `make create-user` fixed to run from `admin/`. First staging deploy |
 | 2026-11-24 | Friend stopped; owner maintains alone. Phase 0: HANDOFF and TODO merged into one set each, docs updated, Rust 1.100 installed, 23/23 tests, fmt + clippy clean, CI lint steps blocking |

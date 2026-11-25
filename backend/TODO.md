@@ -125,7 +125,7 @@ Until 2026-11-24 `client` and `admin` kept separate registers and some IDs colli
 - **Context & Problem Statement**:
   1. ~~Clippy and rustfmt fail on existing code, so CI runs them as advisory only.~~ Done 2026-11-24 (Rust 1.100): `cargo fmt --all`; fixed `unnecessary_cast` (client and admin `Clock`), unused `DbSessionRow.token_hash` (dropped from the struct and the two SELECTs), `cloned_ref_to_slice_refs` (`auth/jwt.rs` test), `let_unit_value` (`auth/password.rs` test); allowed `result_large_err` on `authenticate_from_parts` (axum rejection type); moved `pbkdf2` to non-wasm dependencies. CI fmt and clippy steps are now blocking.
   2. client: enforce an `https://` scheme on `TURNSTILE_VERIFY_URL` and `JWKS_URL` in staging and prod.
-  3. client: structured, PII/token-redacted security logs for `401` / `403` / `429` / `503`.
+  3. Structured, PII/token-redacted security logs for `401` / `403` / `429` / `503`. (Partly done 2026-11-25: every 5xx with an internal detail is logged server-side with its request id, in both Workers.)
   4. admin: `handle_login` returns before PBKDF2 when the email is unknown, a small timing difference between unknown emails and wrong passwords. Run a dummy verification.
   5. `cargo-audit` is not in CI.
 - **Proto-Spec Sketch (Suggested Approach)**:

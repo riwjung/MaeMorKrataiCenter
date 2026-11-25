@@ -1,7 +1,6 @@
 name = "maemorkratai-backend-admin-dev"
 main = "build/worker/shim.mjs"
 compatibility_date = "2026-11-01"
-migrations_dir = "../migrations"
 
 [build]
 command = "worker-build --release"
@@ -41,7 +40,7 @@ name = "maemorkratai-backend-admin-staging"
 [env.staging.vars]
 ENVIRONMENT = "staging"
 ALLOWED_ORIGINS = "https://admin-staging.maemorkratai.com"
-JWT_ISSUER = "https://admin-api-staging.maemorkratai.com"
+JWT_ISSUER = "https://maemorkratai-backend-admin-staging.maemorkratai.workers.dev"
 JWT_AUDIENCE = "maemorkratai-admin"
 ACCESS_TOKEN_TTL_SECS = "900"
 REFRESH_TOKEN_TTL_SECS = "604800"
@@ -51,16 +50,18 @@ MAX_BODY_BYTES = "65536"
 [[env.staging.d1_databases]]
 binding = "DB"
 database_name = "maemorkratai-db-staging"
-database_id = "00000000-0000-0000-0000-000000000002"
+database_id = "f920237f-2f93-4709-a098-5fa4b4b4c0d3"
 migrations_dir = "../migrations"
 
-[[env.staging.r2_buckets]]
-binding = "PUBLIC_ASSETS"
-bucket_name = "maemorkratai-public-staging"
-
-[[env.staging.r2_buckets]]
-binding = "PRIVATE_STORAGE"
-bucket_name = "maemorkratai-private-staging"
+# R2 is not enabled on the Cloudflare account yet (2026-11-25). Staging runs without R2 bindings,
+# so /health reports 503 for R2 until R2 is enabled and these blocks are restored.
+# [[env.staging.r2_buckets]]
+# binding = "PUBLIC_ASSETS"
+# bucket_name = "maemorkratai-public-staging"
+#
+# [[env.staging.r2_buckets]]
+# binding = "PRIVATE_STORAGE"
+# bucket_name = "maemorkratai-private-staging"
 
 [[env.staging.ratelimits]]
 name = "AUTH_RATE_LIMITER"

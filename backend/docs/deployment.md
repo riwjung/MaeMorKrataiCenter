@@ -1,6 +1,6 @@
 # Backend Deployment Runbook (Cloudflare)
 
-Status: **prepared, not deployed.** No Cloudflare resources have been created and no Worker has been published.
+Status: **staging deployed 2026-11-25** on `*.workers.dev` (D1 only; R2 is not enabled on the account yet, so `/health` returns 503). Prod is not deployed.
 
 ## What is deployed
 
