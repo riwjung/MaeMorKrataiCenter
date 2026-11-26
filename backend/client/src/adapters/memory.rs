@@ -1,10 +1,29 @@
 use crate::config::{ClientConfig, Environment};
 use crate::error::ClientError;
-use crate::ports::{ClientPorts, Clock, HealthPort, RateLimitPort, SecretProvider};
+use crate::master_data::{
+    CardArtRow, CardRow, CategoryRow, DailyCardRow, DailyMetaRow, DailyRows, LoveStatusRow,
+    PositionRow, ReadingCardRows, ReadingConfigRows, SituationRow, SuggestionRow,
+};
+use crate::ports::{ClientPorts, Clock, HealthPort, MasterDataPort, RateLimitPort, SecretProvider};
 use async_trait::async_trait;
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
+
+/// Master-data rows held by the memory adapter, one field per D1 table (`daily_meta` is the
+/// single row or `None` when not seeded). Tests edit it directly, like direct SQL fixtures.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct MasterDataFixture {
+    pub love_statuses: Vec<LoveStatusRow>,
+    pub categories: Vec<CategoryRow>,
+    pub situations: Vec<SituationRow>,
+    pub suggestions: Vec<SuggestionRow>,
+    pub positions: Vec<PositionRow>,
+    pub cards: Vec<CardRow>,
+    pub card_art: Vec<CardArtRow>,
+    pub daily_meta: Option<DailyMetaRow>,
+    pub daily_cards: Vec<DailyCardRow>,
+}
 
 #[derive(Default)]
 pub struct MemoryClientStore {
@@ -14,6 +33,9 @@ pub struct MemoryClientStore {
     pub rate_limit_max: AtomicU64,
     pub now_secs: AtomicU64,
     pub turnstile_secret: String,
+    pub master_data: Mutex<MasterDataFixture>,
+    /// Number of `MasterDataPort` calls, including failed ones.
+    pub master_data_reads: AtomicU64,
 }
 
 impl MemoryClientStore {
@@ -25,6 +47,8 @@ impl MemoryClientStore {
             rate_limit_max: AtomicU64::new(60),
             now_secs: AtomicU64::new(1_700_000_000),
             turnstile_secret: "1x0000000000000000000000000000000AA".to_string(),
+            master_data: Mutex::new(MasterDataFixture::default()),
+            master_data_reads: AtomicU64::new(0),
         })
     }
 
@@ -43,9 +67,18 @@ impl MemoryClientStore {
             },
             health: self.clone(),
             rate_limiter: self.clone(),
+            master_data: self.clone(),
             secrets: self.clone(),
             clock: self.clone(),
         }
+    }
+
+    fn read_master_data(&self) -> Result<MasterDataFixture, ClientError> {
+        self.master_data_reads.fetch_add(1, Ordering::SeqCst);
+        if !self.d1_healthy.load(Ordering::SeqCst) {
+            return Err(ClientError::service_unavailable("simulated D1 outage"));
+        }
+        Ok(self.master_data.lock().unwrap().clone())
     }
 }
 
@@ -67,6 +100,44 @@ impl HealthPort for MemoryClientStore {
                 "simulated PUBLIC_ASSETS outage",
             ))
         }
+    }
+}
+
+#[async_trait]
+impl MasterDataPort for MemoryClientStore {
+    async fn reading_cards(&self) -> Result<ReadingCardRows, ClientError> {
+        let data = self.read_master_data()?;
+        Ok(ReadingCardRows {
+            love_statuses: data.love_statuses,
+            cards: data.cards,
+        })
+    }
+
+    async fn daily_cards(&self) -> Result<DailyRows, ClientError> {
+        let data = self.read_master_data()?;
+        let meta = data.daily_meta.ok_or_else(|| {
+            ClientError::service_unavailable("daily_meta row missing; run the seed")
+        })?;
+        Ok(DailyRows {
+            meta,
+            love_statuses: data.love_statuses,
+            cards: data.daily_cards,
+        })
+    }
+
+    async fn card_art(&self) -> Result<Vec<CardArtRow>, ClientError> {
+        Ok(self.read_master_data()?.card_art)
+    }
+
+    async fn reading_config(&self) -> Result<ReadingConfigRows, ClientError> {
+        let data = self.read_master_data()?;
+        Ok(ReadingConfigRows {
+            categories: data.categories,
+            situations: data.situations,
+            suggestions: data.suggestions,
+            positions: data.positions,
+            love_statuses: data.love_statuses,
+        })
     }
 }
 

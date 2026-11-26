@@ -1,10 +1,12 @@
+use crate::adapters::d1_master_data;
 use crate::config::{ClientConfig, Environment};
 use crate::error::ClientError;
-use crate::ports::{ClientPorts, Clock, HealthPort, RateLimitPort, SecretProvider};
+use crate::master_data::{CardArtRow, DailyRows, ReadingCardRows, ReadingConfigRows};
+use crate::ports::{ClientPorts, Clock, HealthPort, MasterDataPort, RateLimitPort, SecretProvider};
 use async_trait::async_trait;
 use std::sync::Arc;
 use worker::send::{SendFuture, SendWrapper};
-use worker::Env;
+use worker::{D1Database, Env};
 
 #[derive(Clone)]
 pub struct WorkerClientAdapter {
@@ -81,9 +83,16 @@ impl WorkerClientAdapter {
             config,
             health: shared.clone(),
             rate_limiter: shared.clone(),
+            master_data: shared.clone(),
             secrets: shared.clone(),
             clock: shared,
         })
+    }
+
+    fn master_db(&self) -> Result<D1Database, ClientError> {
+        self.env
+            .d1("DB")
+            .map_err(|e| ClientError::service_unavailable(format!("D1 binding error: {e}")))
     }
 }
 
@@ -111,6 +120,37 @@ impl HealthPort for WorkerClientAdapter {
                 ClientError::service_unavailable(format!("PUBLIC_ASSETS probe error: {e}"))
             })?;
         Ok(())
+    }
+}
+
+#[async_trait]
+impl MasterDataPort for WorkerClientAdapter {
+    async fn reading_cards(&self) -> Result<ReadingCardRows, ClientError> {
+        let sets =
+            d1_master_data::query_row_sets(self.master_db()?, d1_master_data::READING_CARDS_BATCH)
+                .await?;
+        d1_master_data::reading_cards_from_sets(sets)
+    }
+
+    async fn daily_cards(&self) -> Result<DailyRows, ClientError> {
+        let sets =
+            d1_master_data::query_row_sets(self.master_db()?, d1_master_data::DAILY_CARDS_BATCH)
+                .await?;
+        d1_master_data::daily_from_sets(sets)
+    }
+
+    async fn card_art(&self) -> Result<Vec<CardArtRow>, ClientError> {
+        let sets =
+            d1_master_data::query_row_sets(self.master_db()?, d1_master_data::CARD_ART_BATCH)
+                .await?;
+        d1_master_data::card_art_from_sets(sets)
+    }
+
+    async fn reading_config(&self) -> Result<ReadingConfigRows, ClientError> {
+        let sets =
+            d1_master_data::query_row_sets(self.master_db()?, d1_master_data::READING_CONFIG_BATCH)
+                .await?;
+        d1_master_data::reading_config_from_sets(sets)
     }
 }
 
