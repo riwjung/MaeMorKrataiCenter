@@ -28,6 +28,9 @@ Stores security and administrative audit trail events.
 - `id` (`TEXT PRIMARY KEY`), `actor_user_id` (`TEXT`), `event_type` (`TEXT NOT NULL`), `target_id` (`TEXT`), `metadata_json` (`TEXT NOT NULL`), `created_at` (`INTEGER NOT NULL`)
 - Indexes: `idx_audit_events_created_at`, `idx_audit_events_event_type`
 
+### Master data (`migrations/0002_master_data.sql`)
+Migration 0002 adds 12 master-data tables: `love_statuses`, `categories`, `situations`, `suggestions`, `positions`, `cards`, `card_meanings`, `card_details`, `card_art`, `daily_meta`, `daily_cards` and `daily_love_texts`. Rows come from `seed/*.json` through `make seed-*`, not from the migration. Columns, keys and rules are in [features/master-data.md](../../knowledges/features/master-data.md).
+
 ## 3. Migration Commands
 - Local: `make migrate-local` (`npx wrangler d1 migrations apply DB --local`)
 - Staging: `make migrate-staging` (`npx wrangler d1 migrations apply DB --env staging --remote`)
