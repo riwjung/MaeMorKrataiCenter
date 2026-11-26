@@ -41,3 +41,14 @@ export CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0 
 - 2026-11-26 SPEC-002a-p1-schema-seed: Test helpers shared by test binaries of different crates live in a dev-only crate (`tools/d1-local`). Helpers used by several modules of one test binary live in that binary (`tests/d1/main.rs` plus modules), so no `dead_code` allowance is needed (enforced by: review only).
 - 2026-11-26 SPEC-002a-p1-schema-seed: D1 tests are `#[ignore = "needs npx wrangler and local D1; run with make test-d1"]` (enforced by: review only).
 - 2026-11-26 SPEC-002a-p1-schema-seed: The seed upsert is always `ON CONFLICT(<pk>) DO UPDATE`, never `INSERT OR REPLACE`. REPLACE deletes the row first, which fails on foreign keys and loses rows that are not in the seed (enforced by: `tools/seed-build/tests/d1/seed.rs`).
+
+## Patterns from SPEC-002a (client read path)
+
+- A port returns unsorted typed rows. Ordering and response shaping live in one pure module (`client/src/master_data.rs`) shared by the D1 and memory adapters.
+- D1 statements are static `SELECT`s that return one `row_json` TEXT column built with `json_object`, parsed with serde_json into typed rows. Booleans use `sql_bool`. `"key"` is quoted.
+- Every D1 call in an `async_trait` method goes through one `SendFuture::new(async move { ... })` block.
+- Every adapter SQL constant is exercised against real local D1 (SQLite) in `make test-d1`, through the production parse and assembly functions, by `client/tests/d1_master_data_sql.rs`, which uses the shared `tools/d1-local` harness. `tools/seed-build` does not depend on `client`.
+- Public cacheable responses set `Cache-Control` and `Vary: Origin` in the handler, and only on `200`. Errors use `ClientError::into_response_with_request_id` (`no-store`).
+- Test helpers shared by several files under `client/tests/` live in a `support`-style module with a module-level `#![allow(dead_code)]` and a comment giving the reason (each test file is its own crate). This is the documented exception to the no-`#[allow]` rule in the Conventions section above.
+
+No new lint rule: clippy has no rule for these patterns.

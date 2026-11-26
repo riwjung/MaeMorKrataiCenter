@@ -27,6 +27,8 @@ Run every backend command through `make` from `backend/`. There are no standalon
 | Load master data (seed) | `make seed-staging` / `make seed-prod` (`make seed-local` for dev; `make seed-build` to only build) |
 | Verify code | `make check`, `make test` |
 | D1-level SQL tests | `make test-d1` (needs Node.js and `npx wrangler`) |
+| Client SQL on real local D1 | make test-d1-read (also run by make test-d1) |
+| Local Worker smoke test | make smoke-local (migrates and seeds admin/.wrangler/state, runs client with wrangler dev, curls the GETs) |
 | Local dev | `make dev-admin`, `make dev-client` |
 
 `seed/build/` holds the generated `seed.sql` and is ignored by git.
@@ -63,3 +65,36 @@ Rules: `ENV` is `dev`, `staging` or `prod`; `SERVICE` is `admin` or `client`. If
   - Token scopes: Workers Scripts (edit), D1 (edit), Workers R2 Storage (edit), Account Settings (read).
   - Create GitHub Environments `staging` and `prod`; add required reviewers on `prod`.
 
+
+## Client master-data read: local checks and staging verification
+
+### Local checks
+
+- `make test-d1-read` runs `client/tests/d1_master_data_sql.rs`: the Worker's own SQL constants and parse code on a real local D1. It uses an isolated state in `target/tmp/d1/client_master_data_sql` through the `d1-local` crate, and builds the seed first (`make seed-build`). `make test-d1` runs it as a prerequisite. Needs Node.js (`npx wrangler`).
+- `make smoke-local` runs `scripts/smoke-master-data.sh`. It applies `make migrate-local` and `make seed-local` to the developer state `admin/.wrangler/state`, starts the client Worker with `wrangler dev --persist-to ../admin/.wrangler/state`, and checks status codes, headers, counts and types with curl. Needs Node.js, `worker-build` (see the prerequisite above) and the p1 seed targets. The first build can take minutes. It never touches staging or prod and does not exercise Workers Cache.
+
+### Staging verification (owner)
+
+Steps 1 to 3 change cloud state. Do not run them without the owner's approval.
+
+1. Local, no cloud change: `make cf-dry-run ENV=staging` passes, which proves wrangler accepts `[env.staging.cache]`.
+2. `[CLOUD]`: `make migrate-staging`, then `make seed-staging`.
+3. `[CLOUD]`: `make deploy-staging`.
+
+The checks below are read-only. Set `S=https://maemorkratai-backend-client-staging.maemorkratai.workers.dev` and `O=https://staging.maemorkratai.com`. The rate limit is 60 requests per minute per path and IP, so wait a minute between the CPU batches. These checks have not been run yet.
+
+1. Hit including the 359 KB body. Run `curl -s -D h1 -o b1 $S/v1/daily-cards; curl -s -D h2 -o b2 $S/v1/daily-cards`. Expect:
+   - both `200` with `cache-control: public, max-age=600` and `vary: Origin`
+   - `h2` shows `cf-cache-status: HIT`
+   - `cmp b1 b2` reports no difference, and `wc -c b2` is about 359,000
+   - repeat for `/v1/cards` (about 255 KB)
+2. `Age` header. `h2` carries `age: <seconds>`. If it does not, the worst-case staleness is about 20 minutes (edge plus browser), and the owner decides per D13 whether to accept it (open question Q1).
+3. Variants per Origin. Run `curl -s -D - -o /dev/null -H "Origin: $O" $S/v1/cards` twice. The second is a `HIT`, and both carry `access-control-allow-origin: $O`. A following request without `Origin` must not carry `access-control-allow-origin`.
+4. Errors and `/health` are not cached. Send each twice:
+   - `curl -s -D - -o /dev/null -X POST $S/v1/cards`: `405`, `allow: GET,HEAD`, `cache-control: no-store`
+   - `curl -s -D - -o /dev/null $S/v1/nope`: `404`, `no-store`
+   - `curl -s -D - -o /dev/null $S/health`: `503` because staging has no R2, `no-store`
+
+   No response shows `cf-cache-status: HIT`.
+5. CPU on a miss. In one terminal run `cd client && npx wrangler tail --env staging --format json`. In another run `for i in $(seq 1 50); do curl -s -o /dev/null "$S/v1/daily-cards?cb=$(date +%s)$i"; done`, wait 60 s, then do the same for `/v1/cards`. A unique query string changes the cache key, so every request is a miss. Read `cpuTime` from the tail events, or use the CPU time percentiles in the dashboard. Pass: p99 under 10 ms and no request failed with error 1102. If p99 is above about 8 ms, the owner decides between P2-PS1 and the Paid plan.
+6. Optional: D1 dashboard rows read for the period match about 1,014 per `/v1/cards` miss and about 546 per `/v1/daily-cards` miss, and are near zero for hits.
