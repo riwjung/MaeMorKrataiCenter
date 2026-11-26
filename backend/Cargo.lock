@@ -295,6 +295,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "d1-local"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+]
+
+[[package]]
 name = "der"
 version = "0.7.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1029,6 +1036,15 @@ dependencies = [
  "pkcs8",
  "subtle",
  "zeroize",
+]
+
+[[package]]
+name = "seed-build"
+version = "0.1.0"
+dependencies = [
+ "d1-local",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

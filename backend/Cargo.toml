@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["client", "admin", "tools/create-user"]
+members = ["client", "admin", "tools/create-user", "tools/seed-build", "tools/d1-local"]
 
 [profile.release]
 opt-level = "s"

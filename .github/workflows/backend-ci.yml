@@ -42,7 +42,7 @@ jobs:
           workspaces: backend
 
       - name: Cargo check (wasm32, workers only)
-        run: cargo check --workspace --exclude create-user --target wasm32-unknown-unknown --locked
+        run: cargo check --workspace --exclude create-user --exclude seed-build --exclude d1-local --target wasm32-unknown-unknown --locked
 
       - name: Cargo test
         run: cargo test --workspace --locked
@@ -51,8 +51,34 @@ jobs:
       - name: Rustfmt
         run: cargo fmt --all --check
 
-      - name: Clippy (host, all targets incl. tests and create-user)
+      - name: Clippy (host, all targets incl. tests, create-user, seed-build and d1-local)
         run: cargo clippy --workspace --all-targets --locked -- -D warnings
 
       - name: Clippy (wasm32, workers only)
-        run: cargo clippy --workspace --exclude create-user --target wasm32-unknown-unknown --locked -- -D warnings
+        run: cargo clippy --workspace --exclude create-user --exclude seed-build --exclude d1-local --target wasm32-unknown-unknown --locked -- -D warnings
+
+  # Real SQL on local D1 (B3). Separate job so the Rust job stays Node-free. No secrets; wrangler pinned.
+  d1-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: backend
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install wrangler (pinned; local D1 only)
+        working-directory: backend/admin
+        run: npm install --no-save wrangler@4.168.0
+
+      - name: D1-level tests (make test-d1)
+        env:
+          WRANGLER_SEND_METRICS: "false"
+        run: make test-d1

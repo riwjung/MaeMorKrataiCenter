@@ -11,7 +11,7 @@
 SHELL := /bin/bash
 
 .PHONY: help check test build-admin build-client dev-admin dev-client \
-	migrate-local migrate-staging migrate-prod create-user \
+	test-d1 migrate-local migrate-staging migrate-prod create-user \
 	cf-whoami cf-bootstrap cf-secret cf-dry-run deploy-staging deploy-prod
 
 help: ## List all targets
@@ -20,10 +20,16 @@ help: ## List all targets
 # ---- Verify & build ---------------------------------------------------------
 
 check: ## Type-check Workers for wasm32
-	cargo check --workspace --exclude create-user --target wasm32-unknown-unknown
+	cargo check --workspace --exclude create-user --exclude seed-build --exclude d1-local --target wasm32-unknown-unknown
 
 test: ## Run all tests
 	cargo test --workspace
+
+# D1-level tests: real SQL on isolated local D1 state under target/tmp/d1 (never the dev DB, never remote).
+# Needs Node.js and wrangler (npx). Tests are #[ignore]d in `make test`; one thread keeps memory low.
+# Plan p2 adds the prerequisite line `test-d1: test-d1-read` (client SQL on the same harness) without editing this recipe.
+test-d1: ## Run D1-level SQL tests on local D1 via wrangler (A2, scenario 27, client SQL)
+	cargo test -p seed-build --test d1 -- --ignored --test-threads=1
 
 build-admin: ## Build the admin Worker bundle
 	cd admin && worker-build --release
