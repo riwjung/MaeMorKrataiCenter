@@ -12,6 +12,7 @@ SHELL := /bin/bash
 
 .PHONY: help check test build-admin build-client dev-admin dev-client \
 	test-d1 migrate-local migrate-staging migrate-prod create-user \
+	seed-build seed-local seed-staging seed-prod \
 	cf-whoami cf-bootstrap cf-secret cf-dry-run deploy-staging deploy-prod
 
 help: ## List all targets
@@ -54,6 +55,27 @@ migrate-staging: ## [CLOUD] Apply D1 migrations to staging
 
 migrate-prod: ## [CLOUD] Apply D1 migrations to prod
 	cd admin && npx wrangler d1 migrations apply DB --env prod --remote
+
+# Seed (D07): seed/*.json -> seed/build/seed.sql (one upsert per row, parents first), then wrangler --file.
+# The upsert returns seeded rows to their seed values (admin edits to them are lost) and leaves
+# other rows alone. Run the matching migrate-* target first.
+seed-build: ## Validate seed/*.json and write seed/build/seed.sql (fails on a dropped field)
+	cargo run -q -p seed-build -- --seed-dir=seed --out=seed/build/seed.sql
+
+seed-local: seed-build ## Upsert the seed into local D1 (run make migrate-local first)
+	cd admin && npx wrangler d1 execute DB --local --file ../seed/build/seed.sql
+
+seed-staging: seed-build ## [CLOUD] Upsert the seed into staging D1 (overwrites admin edits to seeded rows)
+	@cd admin && npx wrangler whoami
+	@read -r -p "Upsert seed/build/seed.sql into STAGING D1 in the account above? Seeded rows are overwritten. [y/N] " ok; \
+		[[ "$$ok" == "y" || "$$ok" == "Y" ]] || { echo aborted; exit 1; }
+	cd admin && npx wrangler d1 execute DB --env staging --remote --file ../seed/build/seed.sql
+
+seed-prod: seed-build ## [CLOUD] Upsert the seed into prod D1 (overwrites admin edits to seeded rows)
+	@cd admin && npx wrangler whoami
+	@read -r -p "Upsert seed/build/seed.sql into PROD D1 in the account above? Seeded rows are overwritten. [y/N] " ok; \
+		[[ "$$ok" == "y" || "$$ok" == "Y" ]] || { echo aborted; exit 1; }
+	cd admin && npx wrangler d1 execute DB --env prod --remote --file ../seed/build/seed.sql
 
 # Runs from admin/: the CLI reads admin/.dev.vars (dev pepper) and calls `wrangler d1 execute DB`, which needs admin/wrangler.toml.
 create-user: ## Create a user. Usage: make create-user EMAIL=a@b.com ROLE=owner ENV=dev
