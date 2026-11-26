@@ -75,7 +75,7 @@ Additions to the Shared Contract (no divergence, only detail it left open):
 - [x] `04_PUBLIC_ROUTES_405_AND_CACHE_HEADERS.md`: four GETs, `405`/`404` fallback, cache headers, HTTP tests (scenarios 5, 6) `[sonnet/medium]`
 - [x] `05_WORKERS_CACHE_CONFIG.md`: `[cache]` blocks in `client/wrangler.toml` (D13) `[haiku/low]`
 - [x] `06_SEED_GOLDEN_SCENARIOS.md`: scenarios 1 to 4, A1, data hygiene against `seed/*.json` (needs p1) `[sonnet/medium]`
-- [ ] `07_D1_SQL_TESTS.md`: adapter SQL on real SQLite, `make test-d1-read` (needs p1) `[sonnet/medium]`
+- [x] `07_D1_SQL_TESTS.md`: adapter SQL on real SQLite, `make test-d1-read` (needs p1) `[sonnet/medium]`
 - [ ] `08_SMOKE_LOCAL.md`: `scripts/smoke-master-data.sh` + `make smoke-local` (needs p1) `[sonnet/medium]`
 - [ ] `09_DOCUMENTATION.md`: feature doc, deployment section, code standards, architecture note `[sonnet/medium]`
 

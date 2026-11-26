@@ -14,6 +14,7 @@ SHELL := /bin/bash
 	test-d1 migrate-local migrate-staging migrate-prod create-user \
 	seed-build seed-local seed-staging seed-prod \
 	cf-whoami cf-bootstrap cf-secret cf-dry-run deploy-staging deploy-prod
+.PHONY: test-d1-read smoke-local
 
 help: ## List all targets
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z0-9_-]+:.*## / {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -31,6 +32,15 @@ test: ## Run all tests
 # Plan p2 adds the prerequisite line `test-d1: test-d1-read` (client SQL on the same harness) without editing this recipe.
 test-d1: ## Run D1-level SQL tests on local D1 via wrangler (A2, scenario 27, client SQL)
 	cargo test -p seed-build --test d1 -- --ignored --test-threads=1
+
+# Runs the client master-data SQL (client/src/adapters/d1_master_data.rs) through the production
+# parse code on an isolated local D1 (target/tmp/d1/client_master_data_sql, via the d1-local
+# crate) with the real migrations and seed. Needs Node.js (npx wrangler).
+test-d1-read: seed-build ## Run the client master-data SQL against a real local D1 (SQLite)
+	cargo test -p backend-client --test d1_master_data_sql -- --ignored --test-threads=1
+
+# p1 owns the test-d1 recipe; this recipe-less line only adds the client SQL check as a prerequisite.
+test-d1: test-d1-read
 
 build-admin: ## Build the admin Worker bundle
 	cd admin && worker-build --release

@@ -27,6 +27,7 @@ worker = { version = "0.8.5", features = ["http", "d1", "axum"] }
 wasm-bindgen = "0.2"
 
 [dev-dependencies]
+d1-local = { path = "../tools/d1-local" }
 rand_core = { version = "0.6", features = ["getrandom"] }
 signature = "2.2"
 tower = { version = "0.5", features = ["util"] }
