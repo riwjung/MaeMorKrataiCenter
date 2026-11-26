@@ -49,8 +49,8 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 ## 3. Active In-Flight Work
 
 - **Active Spec**: [`docs/specs/SPEC-002a-master-data-schema-seed-public-read.md`](docs/specs/SPEC-002a-master-data-schema-seed-public-read.md) (`APPROVED`, `PASSED`, `complex`). Next: [`SPEC-002b`](docs/specs/SPEC-002b-master-data-admin-write.md) (`APPROVED`, `PASSED`, `complex`), after 002a is verified. Parent SPEC-002 split by D11.
-- **Active Plan**: [`docs/plans/SPEC-002a-PLAN-AUDIT.md`](docs/plans/SPEC-002a-PLAN-AUDIT.md) (`ALIGNED`, 2026-11-26): plans `SPEC-002a-p1-schema-seed` (6 tasks) then `SPEC-002a-p2-public-read` (9 tasks), one global order in the audit §2. Done: p1/01–03 (2026-11-26). Next task: `docs/plans/SPEC-002a-p1-schema-seed/04_SEED_BUILD_TOOL.md`. Owner steps (staging deploy, seed load, required `d1-tests` check, D13 checklist) are in audit §4.
-- **Current Task In-Flight**: None between tasks (gb-execute SPEC-002a; p1/01 seed converted; p1/02 `d1-local` harness, `seed-build` skeleton, `make test-d1` (4 passing), CI job `d1-tests`; p1/03 migration `0002_master_data.sql` (12 tables), scenario 28 and A2 green, `make test-d1` 8 passing)
+- **Active Plan**: [`docs/plans/SPEC-002a-PLAN-AUDIT.md`](docs/plans/SPEC-002a-PLAN-AUDIT.md) (`ALIGNED`, 2026-11-26): plans `SPEC-002a-p1-schema-seed` (6 tasks) then `SPEC-002a-p2-public-read` (9 tasks), one global order in the audit §2. Done: p1/01–04 (2026-11-26). Next task: `docs/plans/SPEC-002a-p1-schema-seed/05_MAKEFILE_SEED_TARGETS.md`. Owner steps (staging deploy, seed load, required `d1-tests` check, D13 checklist) are in audit §4.
+- **Current Task In-Flight**: None between tasks (gb-execute SPEC-002a; p1/01 seed converted; p1/02 `d1-local` harness, `seed-build` skeleton, `make test-d1` (4 passing), CI job `d1-tests`; p1/03 migration `0002_master_data.sql` (12 tables), scenario 28 and A2 green, `make test-d1` 8 passing; p1/04 `seed-build` (1 plan deviation fixed: header comment), scenario 27 green, `make test-d1` 10 passing)
 - **Active Battleground**: None
 
 ---

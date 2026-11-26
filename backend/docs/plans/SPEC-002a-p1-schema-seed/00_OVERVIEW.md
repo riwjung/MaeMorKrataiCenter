@@ -84,7 +84,7 @@ What p2 can rely on from this plan, and what this plan assumes about p2:
 - [x] `01_SEED_DATA_CONVERSION.md`: run the supplied conversion once, check SHA-256 values, commit `seed/*.json` `[haiku/low]`
 - [x] `02_D1_TEST_HARNESS.md`: `d1-local` harness crate (`D1Local`), `seed-build` crate skeleton, workspace and CI wiring, `make test-d1`, CI job `d1-tests` `[sonnet/medium]`
 - [x] `03_MIGRATION_0002.md`: `migrations/0002_master_data.sql`; scenario 28 (DDL only) and scenario A2 plus the schema rules on D1 `[sonnet/medium]`
-- [ ] `04_SEED_BUILD_TOOL.md`: seed validation and SQL rendering, CLI, seed hygiene tests, seed load equality and scenario 27 on D1 `[sonnet/medium]`
+- [x] `04_SEED_BUILD_TOOL.md`: seed validation and SQL rendering, CLI, seed hygiene tests, seed load equality and scenario 27 on D1 `[sonnet/medium]`
 - [ ] `05_MAKEFILE_SEED_TARGETS.md`: `seed-build`, `seed-local`, `seed-staging` [CLOUD], `seed-prod` [CLOUD]; local load twice `[haiku/low]`
 - [ ] `06_DOCUMENTATION.md`: `docs/knowledges/features/master-data.md` (schema and seed), `docs/knowledges/code-standards.md`, `docs/deployment.md`, `docs/admin/architectures/database.md` `[sonnet/medium]`
 

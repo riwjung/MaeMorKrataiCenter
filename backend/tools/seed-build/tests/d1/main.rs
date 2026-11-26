@@ -3,3 +3,4 @@
 
 mod harness;
 mod schema;
+mod seed;
