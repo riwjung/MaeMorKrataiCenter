@@ -68,7 +68,7 @@ Owner steps for SPEC-002a (each needs the owner's approval; agents never run `[C
 
 4. [ ] Enable R2 on the Cloudflare account (needs a payment method; free tier), create the staging buckets, restore the commented `r2_buckets` blocks in both `wrangler.toml`, redeploy. `/health` should then return 200.
 5. [ ] Replace the Turnstile always-pass test secret on staging client with a real widget secret before any route uses Turnstile.
-6. [ ] `gb-plan` SPEC-002b (admin write). Before it, the admin contract (`docs/api/admin/openapi.yaml`) still names `admin-api-staging.maemorkratai.com` and needs the same review D12 did for the client. The frontend switch to the API (outside the spec, D11) can start now that staging serves the data; its 3-card result box that reads `source_message` / `source_line` must be removed or hidden (D12).
+6. [ ] `gb-plan` SPEC-002b (admin write). Before it, the admin contract (`docs/api/admin/openapi.yaml`) still names `admin-api-staging.maemorkratai.com` and needs the same review D12 did for the client. The frontend switch (outside the spec, D11) is live on the staging frontend since 2026-11-26 (`7b65334`, auto-deployed by Cloudflare from `main`): `https://mmk-frontend-client.maemorkratai.workers.dev` reads master data from the staging API with the bundled JSON as fallback (`<html data-master-data="api">` verified in headless Chrome); Vercel production still uses the bundled JSON; its 3-card result box that reads `source_message` / `source_line` must be removed or hidden (D12).
 7. [ ] Then the 3+1 reading engine (`TODO-003`).
 
 ### Leftovers & Technical Nuances
