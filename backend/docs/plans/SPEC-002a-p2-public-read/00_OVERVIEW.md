@@ -69,7 +69,7 @@ Additions to the Shared Contract (no divergence, only detail it left open):
 ## 4. Task Manifest
 > **Execution Policy**: Each task below MUST be executed by a dedicated, fresh **Executor / Coder** agent. Before execution, each agent must read this `00_OVERVIEW.md` file first. Strictly 1 agent per 1 task.
 > Each line ends with the executor tier: `[model/effort]`. Tasks run in order; each is read together with this file.
-- [ ] `01_MASTER_DATA_ROWS_AND_ASSEMBLY.md`: rows, response structs, pure assembly, unit tests `[sonnet/medium]`
+- [x] `01_MASTER_DATA_ROWS_AND_ASSEMBLY.md`: rows, response structs, pure assembly, unit tests `[sonnet/medium]`
 - [ ] `02_D1_MASTER_DATA_ADAPTER.md`: SQL constants, batched D1 call, row parsing, read-only SQL test `[sonnet/medium]`
 - [ ] `03_MASTER_DATA_PORT_AND_MEMORY_ADAPTER.md`: `MasterDataPort`, memory fixture, D1 wiring, test support `[sonnet/medium]`
 - [ ] `04_PUBLIC_ROUTES_405_AND_CACHE_HEADERS.md`: four GETs, `405`/`404` fallback, cache headers, HTTP tests (scenarios 5, 6) `[sonnet/medium]`

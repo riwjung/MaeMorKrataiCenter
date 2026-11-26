@@ -1,6 +1,7 @@
 pub mod adapters;
 pub mod config;
 pub mod error;
+pub mod master_data;
 pub mod middleware;
 pub mod ports;
 pub mod routes;
