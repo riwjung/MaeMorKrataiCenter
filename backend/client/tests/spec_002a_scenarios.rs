@@ -450,3 +450,31 @@ fn tiny_fixture_bodies_follow_the_contract() {
         assert_eq!(config["uncategorized_suggestions"], json!([]));
     });
 }
+
+// ---- Workers Cache config (task 05, D13) ------------------------------------------------
+
+/// True when the non-comment line right after `header` (ignoring blank lines) is `line`.
+fn section_starts_with(config: &str, header: &str, line: &str) -> bool {
+    let lines: Vec<&str> = config
+        .lines()
+        .map(str::trim)
+        .filter(|l| !l.is_empty() && !l.starts_with('#'))
+        .collect();
+    lines
+        .iter()
+        .position(|l| *l == header)
+        .and_then(|i| lines.get(i + 1))
+        .is_some_and(|next| *next == line)
+}
+
+#[test]
+fn d13_workers_cache_is_enabled_for_every_environment() {
+    let wrangler = include_str!("../wrangler.toml");
+    for header in ["[cache]", "[env.staging.cache]", "[env.prod.cache]"] {
+        assert!(
+            section_starts_with(wrangler, header, "enabled = true"),
+            "client/wrangler.toml needs `{header}` followed by `enabled = true`"
+        );
+    }
+    assert!(!wrangler.contains("cross_version_cache"));
+}

@@ -5,6 +5,12 @@ compatibility_date = "2026-11-01"
 [build]
 command = "worker-build --release"
 
+# D13: Workers Cache in front of the Worker. It stores only responses whose Cache-Control
+# allows it (the four master-data GETs on 200, public, max-age=600); every other response is
+# no-store. No purge (D05/TODO-011). Repeated per env below because inheritance is not documented.
+[cache]
+enabled = true
+
 [vars]
 ENVIRONMENT = "dev"
 ALLOWED_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
@@ -33,6 +39,9 @@ simple = { limit = 60, period = 60 }
 [env.staging]
 name = "maemorkratai-backend-client-staging"
 
+[env.staging.cache]
+enabled = true
+
 [env.staging.vars]
 ENVIRONMENT = "staging"
 ALLOWED_ORIGINS = "https://staging.maemorkratai.com,https://mmk-frontend-client.maemorkratai.workers.dev"
@@ -60,6 +69,9 @@ simple = { limit = 60, period = 60 }
 
 [env.prod]
 name = "maemorkratai-backend-client-prod"
+
+[env.prod.cache]
+enabled = true
 
 [env.prod.vars]
 ENVIRONMENT = "prod"
