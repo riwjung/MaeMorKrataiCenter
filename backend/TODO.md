@@ -285,6 +285,7 @@ Until 2026-11-24 `client` and `admin` kept separate registers and some IDs colli
 - **Discovered By / During**: SPEC-002a plan p2 (battleground B1), plan audit
 - **Priority**: `P2 (Medium)`
 - **Why Not Now?**: Workers Cache (D13) makes misses rare and the row-by-row assembly (Option B) is expected to fit 10 ms. The staging CPU measurement decides. It would duplicate the assembly rules.
+- **Staging measurement (2026-11-26)**: miss CPU `/v1/cards` p50 9 / p90 33 / p99 45 ms, `/v1/daily-cards` p50 10 / p90 20 / p99 41 ms (50 requests each, `wrangler tail`), all `ok`, no error 1102. Above the 10 ms target at p90/p99; the owner decides between this item, Workers Paid, or accepting it (see HANDOFF step 1).
 - **Context & Problem Statement**:
   `/v1/cards` (255 KB) and `/v1/daily-cards` (359 KB) may exceed 10 ms CPU on a miss on the Free plan.
 - **Proto-Spec Sketch (Suggested Approach)**:

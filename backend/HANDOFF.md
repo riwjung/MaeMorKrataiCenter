@@ -9,7 +9,7 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 
 ## 1. Executive Summary & Progress
 
-- **Project Status**: `IDLE (Verified)` · SPEC-002a verified 2026-11-26, local only (not deployed to staging); staging otherwise as deployed 2026-11-25
+- **Project Status**: `IDLE (Verified)` · SPEC-002a verified and deployed to staging 2026-11-26 (admin `7de18622`, client `691103c7`); D13 checks pass; miss CPU above the 10 ms target (owner decision pending, step 1)
 - **Last Updated**: 2026-11-26
 - **Owner**: the project owner, alone since 2026-11-24 (frontend and backend). The scaffold was built by a friend who has stopped.
 - **Active Session Agent**: Developer + Claude Code
@@ -62,16 +62,14 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 
 ### Immediate Next Steps (For Next Agent / Developer)
 Owner steps for SPEC-002a (each needs the owner's approval; agents never run `[CLOUD]` targets):
-1. [ ] `make cf-dry-run ENV=staging` (local; proves wrangler accepts `[env.staging.cache]`), then `make migrate-staging` (applies `0002_master_data.sql`).
-2. [ ] `make seed-staging` ([CLOUD], confirms first). It proves the remote `--file` load of 1,669 statements; if remote D1 rejects the size, split `seed.sql` per table (small plan change).
-3. [ ] `make deploy-staging` (admin first, then client), then the D13 staging checklist: the second identical GET is a cache hit including the 359 KB `/v1/daily-cards` and the 255 KB `/v1/cards` bodies; an `Age` header is present; `Vary: Origin` and per-Origin variants; `405`, `404` and `/health` (503 on staging, no R2) are not cached; CPU of a miss p99 under 10 ms with no error 1102 (above about 8 ms the owner chooses between `TODO-018` and the Paid plan). If staging shows no `Age` header, decide whether about 20 minutes of worst-case staleness is acceptable (D13).
-4. [ ] Mark the GitHub check `d1-tests` as required on `main` (branch protection).
-5. [ ] Push the commits `9a8bb03`..HEAD (local only until the owner pushes).
-Then:
-6. [ ] Enable R2 on the Cloudflare account (needs a payment method; free tier), create the staging buckets, restore the commented `r2_buckets` blocks in both `wrangler.toml`, redeploy. `/health` should then return 200.
-7. [ ] Replace the Turnstile always-pass test secret on staging client with a real widget secret before any route uses Turnstile.
-8. [ ] `gb-plan` SPEC-002b (admin write). Before it, the admin contract (`docs/api/admin/openapi.yaml`) still names `admin-api-staging.maemorkratai.com` and needs the same review D12 did for the client. The frontend switch to the API (outside the spec, D11) can run in parallel after step 3; its 3-card result box that reads `source_message` / `source_line` must be removed or hidden (D12).
-9. [ ] Then the 3+1 reading engine (`TODO-003`).
+1. [ ] **Owner decision: CPU of a cache miss.** Staging 2026-11-26, 140 cache-busting requests via `wrangler tail`: `/v1/cards` p50 9 ms, p90 33 ms, p99 45 ms; `/v1/daily-cards` p50 10 ms, p90 20 ms, p99 41 ms; `/v1/card-art` p99 12 ms; `/v1/reading-config` p99 17 ms. All 140 `ok`, no exception, no error 1102, but p99 is above the 10 ms Free-plan target. Hits (most traffic, D13) use no CPU. Options: accept and watch (`TODO-020`), pre-rendered body (`TODO-018`, a spec change), or Workers Paid. Decide before the production frontend reads the API.
+2. [ ] Mark the GitHub check `d1-tests` as required on `main` (branch protection). It passed on its first CI run (run 45759956879).
+3. [x] Done 2026-11-26: push (`0d847ca`), CI green (both jobs), `cf-dry-run`, `migrate-staging` (`0002`), `seed-staging` (1,669 statements in one `--file`; counts 78/74/78/22 null/12/4), `deploy-staging`. D13 checklist: second GET is `cf-cache-status: HIT` for all four (incl. 355 KB daily-cards, 252 KB cards) with the same `x-request-id`; `age` counts up (24 s observed), so total staleness stays within D05's 10 minutes and the 20-minute question is moot; per-Origin variants are separate (allowed origins get their own `Access-Control-Allow-Origin`, others none); 405/404 have no cache entry, 404 and `/health` 503 show `BYPASS`, all `no-store`.
+
+4. [ ] Enable R2 on the Cloudflare account (needs a payment method; free tier), create the staging buckets, restore the commented `r2_buckets` blocks in both `wrangler.toml`, redeploy. `/health` should then return 200.
+5. [ ] Replace the Turnstile always-pass test secret on staging client with a real widget secret before any route uses Turnstile.
+6. [ ] `gb-plan` SPEC-002b (admin write). Before it, the admin contract (`docs/api/admin/openapi.yaml`) still names `admin-api-staging.maemorkratai.com` and needs the same review D12 did for the client. The frontend switch to the API (outside the spec, D11) can start now that staging serves the data; its 3-card result box that reads `source_message` / `source_line` must be removed or hidden (D12).
+7. [ ] Then the 3+1 reading engine (`TODO-003`).
 
 ### Leftovers & Technical Nuances
 - **Leftover Tasks**: `TODO-006` items 2–5 (HTTPS URL guard, redacted security logs, login timing parity, `cargo-audit`). SPEC-002a follow-ups: `TODO-015` to `TODO-022` (see TODO.md).
