@@ -2,3 +2,4 @@
 //! the `d1-local` harness crate. Every test is `#[ignore]`d, so plain `cargo test` needs no Node.js.
 
 mod harness;
+mod schema;

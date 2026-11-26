@@ -288,8 +288,6 @@ fn every_reference_key_check_and_required_column_is_enforced() {
         ],
     );
 }
-```
-SQLite checks NOT NULL while it writes the row and checks foreign keys at the end of the statement, so the `card_art` row for `x-card` with `art = NULL` fails with `NOT NULL constraint failed: card_art.art`.
 
 #[test]
 #[ignore = "needs npx wrangler and local D1; run with make test-d1"]
@@ -320,6 +318,8 @@ fn daily_columns_are_not_null_except_the_two_theme_variants() {
     )
     .expect("summary_theme and overview_theme are nullable");
 }
+```
+SQLite checks NOT NULL while it writes the row and checks foreign keys at the end of the statement, so the `card_art` row for `x-card` with `art = NULL` fails with `NOT NULL constraint failed: card_art.art`.
 
 ## 4. Red (run before creating the migration)
 ```bash
