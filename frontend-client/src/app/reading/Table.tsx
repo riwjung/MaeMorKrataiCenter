@@ -1,7 +1,8 @@
 'use client';
 import {useEffect, useLayoutEffect, useRef, useState, type CSSProperties} from 'react';
 import {createPortal} from 'react-dom';
-import {cards, placedCards, positions, type Card, type DrawSession} from '../../lib/reading';
+import {placedCards, type Card, type DrawSession} from '../../lib/reading';
+import {useMasterData} from '../../lib/master-data';
 import {webArt} from '../../lib/motion-lite';
 import {loadReadingMotion, type Motion, type Timeline} from '../../lib/reading-motion';
 import {fanArc, FAN_STEP} from './fan';
@@ -133,6 +134,7 @@ function DragGhost({drag, ghost, reduced}: {drag: Drag; ghost: React.RefObject<H
 }
 
 export function Table({session, reduced, external, onPick, onRemove, onOpen, onReveal, onSpread}: {session: DrawSession; reduced:boolean; external:boolean; onPick:(id:string, slot?:number)=>void; onRemove:(id:string)=>void; onOpen:(slot:number)=>void; onReveal:()=>void; onSpread:()=>void}) {
+  const {cards, config: {positions}} = useMasterData();
   const [candidate, setCandidate] = useState<string|null>(null);
   const [grid, setGrid] = useState(false);
   const [flight, setFlight] = useState<Flight|null>(null);

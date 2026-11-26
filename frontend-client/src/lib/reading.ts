@@ -1,29 +1,8 @@
-import catalog from './reading-cards.json';
+import {getMasterData, type MasterData} from './master-data';
+import type {Category} from './reading-config';
 
-export const cards = catalog;
-export type Card = typeof cards[number];
-export const contexts = ['คนโสด', 'แอบชอบ', 'คุยกัน', 'ซับซ้อน', 'มีแฟน', 'เลิกกัน'] as const;
-export type LoveContext = typeof contexts[number];
-export type Category = 'love' | 'work' | 'money' | 'life';
-export const categories: {id: Category; label: string; icon: string; hint: string}[] = [
-  {id: 'love', label: 'ความรัก', icon: '♡', hint: 'ความรู้สึกและความสัมพันธ์'},
-  {id: 'work', label: 'การงาน', icon: '✧', hint: 'เส้นทางที่กำลังเติบโต'},
-  {id: 'money', label: 'การเงิน', icon: '☾', hint: 'ความมั่นคงและการวางแผน'},
-  {id: 'life', label: 'ภาพรวมชีวิต', icon: '✺', hint: 'กลับมาฟังเสียงข้างใน'},
-];
-export const situations: Record<Category, readonly string[]> = {
-  love: contexts,
-  work: ['งานปัจจุบัน', 'มองหางานใหม่', 'ธุรกิจของตัวเอง'],
-  money: ['รายรับและรายจ่าย', 'วางแผนเก็บเงิน', 'เป้าหมายระยะยาว'],
-  life: ['กำลังเปลี่ยนแปลง', 'มีเรื่องต้องตัดสินใจ', 'อยากทบทวนตัวเอง'],
-};
-export const suggestions: Record<Category, readonly string[]> = {
-  love: ['ความสัมพันธ์นี้กำลังพาฉันไปทางไหน?', 'มีอะไรในใจที่ฉันควรทำความเข้าใจ?', 'ฉันควรดูแลหัวใจตัวเองอย่างไร?'],
-  work: ['ฉันอยากเห็นอะไรเปลี่ยนไปในเส้นทางการทำงาน?', 'อะไรทำให้ฉันรู้สึกติดขัดกับงานตอนนี้?', 'ฉันอยากเติบโตในทิศทางไหน?'],
-  money: ['ฉันอยากปรับนิสัยการใช้เงินเรื่องไหน?', 'ความมั่นคงมีความหมายอย่างไรสำหรับฉัน?', 'เป้าหมายทางการเงินที่สำคัญตอนนี้คืออะไร?'],
-  life: ['ช่วงนี้ฉันควรกลับมาฟังตัวเองเรื่องอะไร?', 'มีอะไรที่ฉันพร้อมจะปล่อยวาง?', 'ฉันอยากให้ชีวิตค่อย ๆ เปลี่ยนไปอย่างไร?'],
-};
-export const positions = ['อดีต', 'ปัจจุบัน', 'อนาคต'] as const;
+export type {Card} from './master-data-adapter';
+export type {Category} from './reading-config';
 export type ReadingRequest = {category: Category; situation: string; question: string; spread: 'past-present-future'};
 export type Phase = 'topic' | 'question' | 'shuffling' | 'gathering' | 'spreading' | 'selecting' | 'revealing' | 'locked' | 'reading';
 // slots follow the spread positions (past, present, future); a card keeps the slot it was placed in.
@@ -37,7 +16,7 @@ export function sessionReducer(s: DrawSession, action: Action): DrawSession {
     case 'QUESTION': return s.phase === 'topic' ? {...s, phase: 'question'} : s;
     case 'TOPIC': return s.phase === 'question' ? {...s, phase: 'topic'} : s;
     case 'EDIT': return ['shuffling','selecting'].includes(s.phase) ? {...initialSession, phase: 'question'} : s;
-    case 'START': return s.phase === 'question' && action.deck.length === 78 && new Set(action.deck).size === 78 && action.deck.every(id => cards.some(c => c.id === id)) ? {...initialSession, phase: 'shuffling', deck: action.deck} : s;
+    case 'START': return s.phase === 'question' && action.deck.length === 78 && new Set(action.deck).size === 78 && action.deck.every(id => getMasterData().cards.some(c => c.id === id)) ? {...initialSession, phase: 'shuffling', deck: action.deck} : s;
     case 'STOP': return s.phase === 'shuffling' ? {...s, phase: 'gathering'} : s;
     case 'GATHERED': return s.phase === 'gathering' ? {...s, phase: 'spreading'} : s;
     case 'SPREAD': return s.phase === 'spreading' ? {...s, phase: 'selecting'} : s;
@@ -74,7 +53,7 @@ export function randomBelow(n: number): number {
   return buffer[0] % n;
 }
 export function shuffleDeck(): string[] {
-  const deck = cards.map(c => c.id);
+  const deck = getMasterData().cards.map(c => c.id);
   for (let i = deck.length - 1; i > 0; i--) {
     const j = randomBelow(i + 1);
     [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -86,15 +65,16 @@ export type ReadingResult = {
   entries: {id: string; name: string; position: string; text: string; source: {url: string; message: number; line: number} | null}[];
   summary: string; reflection: string;
 };
-export function createReading(request: ReadingRequest, selected: string[]): ReadingResult {
+export function createReading(request: ReadingRequest, selected: string[], data: MasterData = getMasterData()): ReadingResult {
+  const {cards, config: {categories, situations, positions}} = data;
   if (selected.length !== 3 || new Set(selected).size !== 3) throw new Error('ต้องเลือกไพ่ต่างกันครบ 3 ใบ');
   if (!situations[request.category].includes(request.situation)) throw new Error('สถานการณ์ไม่ตรงกับหมวดคำถาม');
   const entries = selected.map((id, i) => {
     const card = cards.find(c => c.id === id);
     if (!card) throw new Error('ไม่พบไพ่');
     return {id, name: card.name, position: positions[i],
-      text: request.category === 'love' ? card.meanings[request.situation as LoveContext] : `ไพ่ ${card.name} อยู่ในตำแหน่ง${positions[i]} สำหรับหัวข้อ “${request.situation}” — ส่วนนี้รอคำอ่านจากแม่หมอกระต่าย`,
-      source: request.category === 'love' ? {url: card.source_url, message: card.source_message, line: card.source_line} : null};
+      text: request.category === 'love' ? (card.meanings[request.situation] ?? 'แชทต้นทางยังไม่มีคำอ่านสำหรับสถานะนี้ของไพ่ใบนี้') : `ไพ่ ${card.name} อยู่ในตำแหน่ง${positions[i]} สำหรับหัวข้อ “${request.situation}” — ส่วนนี้รอคำอ่านจากแม่หมอกระต่าย`,
+      source: request.category === 'love' ? card.source : null};
   });
   const summary = request.category === 'love'
     ? `ในบริบท “${request.situation}” ลองวางทั้งสามมุมไว้ข้างกัน: อดีต · ${entries[0].name} — ${entries[0].text} / ปัจจุบัน · ${entries[1].name} — ${entries[1].text} / อนาคต · ${entries[2].name} — ${entries[2].text} การเชื่อมความหมายตามเวลาและความสัมพันธ์ระหว่างไพ่ยังรอเจ้าของทบทวน จึงยังไม่ใช่บทสรุปคำทำนายที่ผ่านการรับรอง`

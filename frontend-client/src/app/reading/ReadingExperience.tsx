@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
 import {useEffect, useMemo, useReducer, useRef, useState} from 'react';
-import {categories, contexts, suggestions, situations, createReading, initialSession, placedCards, sessionReducer, shuffleDeck, type Category, type ReadingRequest} from '../../lib/reading';
+import {createReading, initialSession, placedCards, sessionReducer, shuffleDeck, type Category, type ReadingRequest} from '../../lib/reading';
+import {useMasterData} from '../../lib/master-data';
 import {ShuffleDeck, Table} from './Table';
 import {DeckScene, type DeckPhase} from './DeckScene';
 import {AnimatedRabbit} from './Motion';
@@ -10,6 +11,8 @@ import './reading.css';
 import './motion.css';
 
 export default function ReadingPage() {
+  const data = useMasterData();
+  const {categories, situations, suggestions, loveLabels: contexts} = data.config;
   const [session, dispatch] = useReducer(sessionReducer, initialSession);
   const [category, setCategory] = useState<Category>('love');
   const [situation, setSituation] = useState<string>(contexts[0]);
@@ -27,7 +30,7 @@ export default function ReadingPage() {
   const deck3d = webgl && !reduced;
   const categoryLabel = categories.find(c=>c.id===category)!.label;
   const request: ReadingRequest = useMemo(()=>({category,situation,question:question.trim(),spread:'past-present-future'}),[category,situation,question]);
-  const result = useMemo(()=>session.unlocked?createReading(request,placedCards(session)):null,[session.unlocked,request,session]);
+  const result = useMemo(()=>session.unlocked?createReading(request,placedCards(session),data):null,[session.unlocked,request,session,data]);
   const openedCount = session.opened.filter(Boolean).length;
   useEffect(()=>{
     const media=matchMedia('(prefers-reduced-motion: reduce)');

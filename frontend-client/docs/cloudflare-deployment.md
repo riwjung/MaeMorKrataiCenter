@@ -120,3 +120,23 @@ public links. Keep the Vercel fallback during the migration.
 - [Workers Builds configuration](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)
 - [Build watch paths](https://developers.cloudflare.com/workers/ci-cd/builds/build-watch-paths/)
 - [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/)
+
+## Master data from the API (2026-11-26)
+
+The site reads its master data (cards, daily cards, card art sizes, reading taxonomy) from the backend
+client API when its hostname is mapped in `src/lib/master-data.ts`:
+
+| Site hostname | API |
+| --- | --- |
+| `mmk-frontend-client.maemorkratai.workers.dev` | `https://maemorkratai-backend-client-staging.maemorkratai.workers.dev` |
+| `staging.maemorkratai.com` | same staging API |
+| anything else (Vercel, production, local) | none: the bundled JSON in `src/lib/` |
+
+- The bundled JSON renders the first paint. The API bodies replace it once all four requests succeed and
+  pass validation (`src/lib/master-data-adapter.ts`). On any failure the page keeps the bundled data.
+- `<html data-master-data="api">` or `"bundled"` shows which data a page renders.
+- `NEXT_PUBLIC_MASTER_DATA_API` at build time overrides the map, for testing against a local
+  `wrangler dev` of the backend client (its dev CORS allows `http://127.0.0.1:3000`).
+- `npm run test:data` checks that the API bodies (`../backend/seed/*.json`) adapt to exactly the bundled
+  data, and that broken bodies are rejected.
+- Pushing to `main` builds and deploys this Worker automatically (observed 2026-11-26 after a push).

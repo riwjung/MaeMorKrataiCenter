@@ -9,7 +9,7 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 
 ## 1. Executive Summary & Progress
 
-- **Project Status**: `IDLE (Verified)` · SPEC-002a verified and deployed to staging 2026-11-26 (admin `7de18622`, client `691103c7`); D13 checks pass; miss CPU above the 10 ms target (owner decision pending, step 1)
+- **Project Status**: `IDLE (Verified)` · SPEC-002a verified and deployed to staging 2026-11-26 (admin `7de18622`, client `691103c7`); D13 checks pass; miss CPU above the 10 ms target, accepted for now (D14)
 - **Last Updated**: 2026-11-26
 - **Owner**: the project owner, alone since 2026-11-24 (frontend and backend). The scaffold was built by a friend who has stopped.
 - **Active Session Agent**: Developer + Claude Code
@@ -62,7 +62,7 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 
 ### Immediate Next Steps (For Next Agent / Developer)
 Owner steps for SPEC-002a (each needs the owner's approval; agents never run `[CLOUD]` targets):
-1. [ ] **Owner decision: CPU of a cache miss.** Staging 2026-11-26, 140 cache-busting requests via `wrangler tail`: `/v1/cards` p50 9 ms, p90 33 ms, p99 45 ms; `/v1/daily-cards` p50 10 ms, p90 20 ms, p99 41 ms; `/v1/card-art` p99 12 ms; `/v1/reading-config` p99 17 ms. All 140 `ok`, no exception, no error 1102, but p99 is above the 10 ms Free-plan target. Hits (most traffic, D13) use no CPU. Options: accept and watch (`TODO-020`), pre-rendered body (`TODO-018`, a spec change), or Workers Paid. Decide before the production frontend reads the API.
+1. [x] **Decided 2026-11-26 (D14): accept for now and watch (`TODO-020`).** CPU of a cache miss: Staging 2026-11-26, 140 cache-busting requests via `wrangler tail`: `/v1/cards` p50 9 ms, p90 33 ms, p99 45 ms; `/v1/daily-cards` p50 10 ms, p90 20 ms, p99 41 ms; `/v1/card-art` p99 12 ms; `/v1/reading-config` p99 17 ms. All 140 `ok`, no exception, no error 1102, but p99 is above the 10 ms Free-plan target. Hits (most traffic, D13) use no CPU. Revisit before the production frontend reads the API or on the first error 1102: `TODO-018` (spec change) or Workers Paid.
 2. [ ] Mark the GitHub check `d1-tests` as required on `main` (branch protection). It passed on its first CI run (run 45759956879).
 3. [x] Done 2026-11-26: push (`0d847ca`), CI green (both jobs), `cf-dry-run`, `migrate-staging` (`0002`), `seed-staging` (1,669 statements in one `--file`; counts 78/74/78/22 null/12/4), `deploy-staging`. D13 checklist: second GET is `cf-cache-status: HIT` for all four (incl. 355 KB daily-cards, 252 KB cards) with the same `x-request-id`; `age` counts up (24 s observed), so total staleness stays within D05's 10 minutes and the 20-minute question is moot; per-Origin variants are separate (allowed origins get their own `Access-Control-Allow-Origin`, others none); 405/404 have no cache entry, 404 and `/health` 503 show `BYPASS`, all `no-store`.
 
