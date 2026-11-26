@@ -11,7 +11,8 @@ use crate::adapters::worker_env::WorkerClientAdapter;
 use crate::error::ClientError;
 use crate::middleware::security::security_pipeline_middleware;
 use crate::ports::ClientPorts;
-use crate::routes::health::{fallback_not_found, get_health};
+use crate::routes::health::{fallback_method_not_allowed, fallback_not_found, get_health};
+use crate::routes::master_data::{get_card_art, get_cards, get_daily_cards, get_reading_config};
 use axum::middleware::from_fn_with_state;
 use axum::routing::get;
 use axum::Router;
@@ -21,6 +22,12 @@ use worker::{event, Context, Env, HttpRequest};
 pub fn build_router(ports: ClientPorts) -> Router {
     Router::new()
         .route("/health", get(get_health))
+        .route("/v1/cards", get(get_cards))
+        .route("/v1/daily-cards", get(get_daily_cards))
+        .route("/v1/card-art", get(get_card_art))
+        .route("/v1/reading-config", get(get_reading_config))
+        // Must come after every `.route(...)`: it is applied to the routes registered so far.
+        .method_not_allowed_fallback(fallback_method_not_allowed)
         .fallback(fallback_not_found)
         .layer(from_fn_with_state(
             ports.clone(),

@@ -72,7 +72,7 @@ Additions to the Shared Contract (no divergence, only detail it left open):
 - [x] `01_MASTER_DATA_ROWS_AND_ASSEMBLY.md`: rows, response structs, pure assembly, unit tests `[sonnet/medium]`
 - [x] `02_D1_MASTER_DATA_ADAPTER.md`: SQL constants, batched D1 call, row parsing, read-only SQL test `[sonnet/medium]`
 - [x] `03_MASTER_DATA_PORT_AND_MEMORY_ADAPTER.md`: `MasterDataPort`, memory fixture, D1 wiring, test support `[sonnet/medium]`
-- [ ] `04_PUBLIC_ROUTES_405_AND_CACHE_HEADERS.md`: four GETs, `405`/`404` fallback, cache headers, HTTP tests (scenarios 5, 6) `[sonnet/medium]`
+- [x] `04_PUBLIC_ROUTES_405_AND_CACHE_HEADERS.md`: four GETs, `405`/`404` fallback, cache headers, HTTP tests (scenarios 5, 6) `[sonnet/medium]`
 - [ ] `05_WORKERS_CACHE_CONFIG.md`: `[cache]` blocks in `client/wrangler.toml` (D13) `[haiku/low]`
 - [ ] `06_SEED_GOLDEN_SCENARIOS.md`: scenarios 1 to 4, A1, data hygiene against `seed/*.json` (needs p1) `[sonnet/medium]`
 - [ ] `07_D1_SQL_TESTS.md`: adapter SQL on real SQLite, `make test-d1-read` (needs p1) `[sonnet/medium]`

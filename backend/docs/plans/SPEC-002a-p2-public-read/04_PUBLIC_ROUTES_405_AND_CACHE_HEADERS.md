@@ -550,6 +550,8 @@ pub fn build_router(ports: ClientPorts) -> Router {
 }
 ```
 
+> **Execution note 2026-11-26:** red showed 7 failing HTTP tests, not 9. `unknown_paths_return_404_for_every_method` and `health_stays_no_store_...` already pass before the routes exist (regression guards), so 7 is the consistent count. `scenario_6_...` failed on the empty body of axum's bare `405` (no envelope), which is the expected missing-envelope reason.
+
 ## 6. Green + Standards Check
 ```bash
 cargo test -p backend-client --test spec_002a_scenarios

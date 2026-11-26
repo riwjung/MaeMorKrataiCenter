@@ -40,3 +40,9 @@ pub async fn get_health(
 pub async fn fallback_not_found(Extension(req_id): Extension<RequestId>) -> Response {
     ClientError::not_found().into_response_with_request_id(&req_id.0)
 }
+
+/// D12: a known path called with a method it does not serve. axum adds the `Allow` header
+/// (for example `GET,HEAD`) from the route's method router after this handler returns.
+pub async fn fallback_method_not_allowed(Extension(req_id): Extension<RequestId>) -> Response {
+    ClientError::method_not_allowed().into_response_with_request_id(&req_id.0)
+}

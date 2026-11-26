@@ -55,6 +55,15 @@ impl ClientError {
         }
     }
 
+    pub fn method_not_allowed() -> Self {
+        Self {
+            status: StatusCode::METHOD_NOT_ALLOWED,
+            code: "METHOD_NOT_ALLOWED",
+            public_message: "Method not allowed on this path.".to_string(),
+            internal_detail: None,
+        }
+    }
+
     pub fn payload_too_large() -> Self {
         Self {
             status: StatusCode::PAYLOAD_TOO_LARGE,
