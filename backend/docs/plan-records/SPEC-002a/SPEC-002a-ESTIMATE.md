@@ -1,6 +1,6 @@
 # Plan Estimate: SPEC-002a Master Data: Schema, Seed and Public Read API
 
-- **Spec**: [SPEC-002a-master-data-schema-seed-public-read.md](../specs/SPEC-002a-master-data-schema-seed-public-read.md)
+- **Spec**: [SPEC-002a-master-data-schema-seed-public-read.md](../../specs/SPEC-002a-master-data-schema-seed-public-read.md)
 - **Created**: 2026-11-25
 - **Recommended planner tier**: opus/medium (spec complexity is `complex`; owner confirms)
 

@@ -50,7 +50,7 @@ Source: `seed/*.json`. Each file has the exact shape of one public `client` resp
 
 The files carry two derived fields, `missing_fields` and `situations.love`. They are checked by `seed-build` and not stored.
 
-`seed/` is a one-off stripped copy of the frontend data (D07). It was produced by the conversion script in `docs/plans/SPEC-002a-p1-schema-seed/01_SEED_DATA_CONVERSION.md` (or `docs/plan-records/SPEC-002a-p1-schema-seed/01_SEED_DATA_CONVERSION.md` once the plan is archived). Never regenerate `seed/` from `../frontend-client`. A new conversion is a new plan.
+`seed/` is a one-off stripped copy of the frontend data (D07). It was produced by the conversion script in `docs/plan-records/SPEC-002a-p1-schema-seed/01_SEED_DATA_CONVERSION.md`. Never regenerate `seed/` from `../frontend-client`. A new conversion is a new plan.
 
 `tools/seed-build` reads the four files and writes `seed/build/seed.sql`. The `seed/build/` directory is generated and ignored by git.
 

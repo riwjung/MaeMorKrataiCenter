@@ -1,10 +1,10 @@
 # Plan 00: Overview & Task Manifest
 
 - **Spec**: [SPEC-002a](../../specs/SPEC-002a-master-data-schema-seed-public-read.md) (parent [SPEC-002](../../specs/SPEC-002-master-data-to-backend.md) §4.1 to 4.4)
-- **Estimate**: [SPEC-002a-ESTIMATE.md](../SPEC-002a-ESTIMATE.md), plan 2 of 2 (`SPEC-002a-p2-public-read`); sibling `SPEC-002a-p1-schema-seed`
+- **Estimate**: [SPEC-002a-ESTIMATE.md](../SPEC-002a/SPEC-002a-ESTIMATE.md), plan 2 of 2 (`SPEC-002a-p2-public-read`); sibling `SPEC-002a-p1-schema-seed`
 - **Contract**: `../docs/api/client/openapi.yaml` v0.2.1 (authoritative for every field name, type and nullability)
 - **Created**: 2026-11-25
-- **Status**: IN_PROGRESS (aligned by the Plan Auditor, see `../SPEC-002a-PLAN-AUDIT.md`; execution order across both plans is in section 2 of that file)
+- **Status**: COMPLETED (verified 2026-11-26) (aligned by the Plan Auditor, see `../SPEC-002a/SPEC-002a-PLAN-AUDIT.md`; execution order across both plans is in section 2 of that file)
 
 ## 1. Objective & Architecture Impact
 `client` gains four public, read-only, cached GETs (`/v1/cards`, `/v1/daily-cards`, `/v1/card-art`, `/v1/reading-config`) served from the shared D1 tables that p1 creates and seeds, a `405`/`404` fallback for every route (D12), and Workers Cache (D13).

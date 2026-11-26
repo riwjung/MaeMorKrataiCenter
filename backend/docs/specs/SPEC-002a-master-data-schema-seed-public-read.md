@@ -1,11 +1,11 @@
 ---
 id: SPEC-002a
 title: "Master Data: Schema, Seed and Public Read API"
-status: APPROVED # DRAFT | SPECTRE_REVIEW | APPROVED | IMPLEMENTING | COMPLETED
+status: COMPLETED # DRAFT | SPECTRE_REVIEW | APPROVED | IMPLEMENTING | COMPLETED
 spectre_audit: PASSED # PENDING | PASSED
 complexity: complex # owner's choice 2026-11-25 (D11): the schema here is the base for SPEC-002b
 created_at: "2026-11-25"
-updated_at: "2026-11-25"
+updated_at: "2026-11-26"
 parent_spec: "SPEC-002"
 sub_specs: []
 ---
@@ -76,16 +76,16 @@ The schema delivered here is the **complete** master-data schema for SPEC-002: e
 ## 7. Acceptance Criteria
 Scenario numbers 1–6, 27 and 28 are the SPEC-002 numbers. A1 and A2 are new.
 
-- [ ] Scenario 1: GIVEN a seeded D1 WHEN a visitor requests `GET /v1/cards` THEN it returns 78 cards whose fields and values equal `reading-cards.json` after the keep/drop table and English-key mapping, in file order, AND the response has `Cache-Control: public, max-age=600`.
-- [ ] Scenario 2: GIVEN a seeded D1 WHEN a visitor requests `GET /v1/daily-cards` THEN it returns the metadata and 78 daily cards equal to `daily-cards.json` after the keep/drop table, in file order, with 22 `null` `complicated` texts and matching `missing_fields`, AND no response contains `chatgpt.com`, `source_url` or `raw_file`.
-- [ ] Scenario 3: GIVEN a seeded D1 WHEN a visitor requests `GET /v1/card-art` THEN it returns 74 entries whose `art`, `width`, `height`, `renderedWidth`, `renderedHeight`, `sha256` and `bytes` equal `v3/manifest.json`, AND `six-of-wands`, `nine-of-wands`, `page-of-pentacles`, `king-of-pentacles` are absent and have `art: null` in `GET /v1/cards`.
-- [ ] Scenario 4: GIVEN a seeded D1 WHEN a visitor requests `GET /v1/reading-config` THEN it returns 4 categories; 9 non-love situations (3 each for work, money, life) plus 6 love situations; 12 suggestions with IDs `love-1` … `life-3`; 3 positions; 6 love statuses with both labels in `reading.ts` order; empty `uncategorized_situations` and `uncategorized_suggestions`, AND `GET /v1/daily-cards` `love_statuses` keep the daily file's order.
-- [ ] Scenario 5: GIVEN D1 is unavailable WHEN a visitor requests any master-data endpoint THEN the response is `503` with the error envelope and `Cache-Control: no-store`.
-- [ ] Scenario 6: GIVEN the client Worker WHEN a `POST` is sent to `/v1/cards` THEN the response is `405` with the error envelope and `Cache-Control: no-store`, and D1 is unchanged.
-- [ ] Scenario 27: GIVEN a seeded D1 plus one suggestion row inserted directly with a UUIDv4 id (standing in for an admin-created one) WHEN the developer runs the seed again THEN seeded rows equal the seed values, the extra suggestion still exists, and no `audit_events` rows were added by the seed.
-- [ ] Scenario 28: GIVEN `backend/migrations/` WHEN it is inspected THEN it contains DDL only, no seed INSERTs.
-- [ ] Scenario A1: GIVEN a seeded D1 in which, directly in the database, the `work` situations and suggestions are set to `category = null`, the three `love` suggestions are deleted (the foreign key forbids deleting `love` while they reference it), and the `work` and `love` category rows are deleted, WHEN a visitor requests `GET /v1/reading-config` THEN there is no `work` or `love` category, `uncategorized_situations` holds the 3 work situations (by `sort_order`, then key) followed by the 6 love situations (by `reading_sort_order`), and `uncategorized_suggestions` holds the 3 work suggestions (by `sort_order`, then id).
-- [ ] Scenario A2: GIVEN the migrations are applied WHEN a test inserts directly (a) a daily entry for card `x-card`, (b) a situation with category `nope`, (c) a love-status text for status `widowed`, and (d) a second card with an existing id THEN D1 rejects each statement with a constraint error and the tables are unchanged.
+- [x] Scenario 1: GIVEN a seeded D1 WHEN a visitor requests `GET /v1/cards` THEN it returns 78 cards whose fields and values equal `reading-cards.json` after the keep/drop table and English-key mapping, in file order, AND the response has `Cache-Control: public, max-age=600`.
+- [x] Scenario 2: GIVEN a seeded D1 WHEN a visitor requests `GET /v1/daily-cards` THEN it returns the metadata and 78 daily cards equal to `daily-cards.json` after the keep/drop table, in file order, with 22 `null` `complicated` texts and matching `missing_fields`, AND no response contains `chatgpt.com`, `source_url` or `raw_file`.
+- [x] Scenario 3: GIVEN a seeded D1 WHEN a visitor requests `GET /v1/card-art` THEN it returns 74 entries whose `art`, `width`, `height`, `renderedWidth`, `renderedHeight`, `sha256` and `bytes` equal `v3/manifest.json`, AND `six-of-wands`, `nine-of-wands`, `page-of-pentacles`, `king-of-pentacles` are absent and have `art: null` in `GET /v1/cards`.
+- [x] Scenario 4: GIVEN a seeded D1 WHEN a visitor requests `GET /v1/reading-config` THEN it returns 4 categories; 9 non-love situations (3 each for work, money, life) plus 6 love situations; 12 suggestions with IDs `love-1` … `life-3`; 3 positions; 6 love statuses with both labels in `reading.ts` order; empty `uncategorized_situations` and `uncategorized_suggestions`, AND `GET /v1/daily-cards` `love_statuses` keep the daily file's order.
+- [x] Scenario 5: GIVEN D1 is unavailable WHEN a visitor requests any master-data endpoint THEN the response is `503` with the error envelope and `Cache-Control: no-store`.
+- [x] Scenario 6: GIVEN the client Worker WHEN a `POST` is sent to `/v1/cards` THEN the response is `405` with the error envelope and `Cache-Control: no-store`, and D1 is unchanged.
+- [x] Scenario 27: GIVEN a seeded D1 plus one suggestion row inserted directly with a UUIDv4 id (standing in for an admin-created one) WHEN the developer runs the seed again THEN seeded rows equal the seed values, the extra suggestion still exists, and no `audit_events` rows were added by the seed.
+- [x] Scenario 28: GIVEN `backend/migrations/` WHEN it is inspected THEN it contains DDL only, no seed INSERTs.
+- [x] Scenario A1: GIVEN a seeded D1 in which, directly in the database, the `work` situations and suggestions are set to `category = null`, the three `love` suggestions are deleted (the foreign key forbids deleting `love` while they reference it), and the `work` and `love` category rows are deleted, WHEN a visitor requests `GET /v1/reading-config` THEN there is no `work` or `love` category, `uncategorized_situations` holds the 3 work situations (by `sort_order`, then key) followed by the 6 love situations (by `reading_sort_order`), and `uncategorized_suggestions` holds the 3 work suggestions (by `sort_order`, then id).
+- [x] Scenario A2: GIVEN the migrations are applied WHEN a test inserts directly (a) a daily entry for card `x-card`, (b) a situation with category `nope`, (c) a love-status text for status `widowed`, and (d) a second card with an existing id THEN D1 rejects each statement with a constraint error and the tables are unchanged.
 
 ## 8. Scope Boundaries
 - **In Scope**: the master-data migration; the seed source in `backend/seed/`, the seed build check, and Makefile seed targets; the four public GETs; `405` on `client` master-data writes; conformance to the client contract.
@@ -114,3 +114,4 @@ Scenario numbers 1–6, 27 and 28 are the SPEC-002 numbers. A1 and A2 are new.
 - **Notes for the owner's contract review (D11 item 5)** (resolved in D12, 2026-11-25): the client contract says writes on *any* path return `405` and unknown paths `404`; this spec requires `405` on master-data paths, so state which wins for a POST to an unknown path. Its `servers` list still names `api-staging.maemorkratai.com`; staging actually runs on `*.workers.dev`.
 - **Auditor Sign-Off**: Spectre (`PASSED` on 2026-11-25)
 - **Human Sign-Off**: Owner (`APPROVED` on 2026-11-25)
+- **Verification**: Verifier PASS on 2026-11-26 (all scenarios and EARS requirements tested, OWASP audit passed; records in `docs/plan-records/SPEC-002a-p1-schema-seed/` and `docs/plan-records/SPEC-002a-p2-public-read/`). Staging deploy and the D13 checklist are owner steps (HANDOFF section 4).

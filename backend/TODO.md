@@ -7,7 +7,7 @@
 > Rather than letting these ideas get lost or polluting active tasks, capture them here as **Proto-Specs** (Candidate Specs).
 > When the project is ready for its next cycle, **Spectre** reviews this file and graduates high-value proto-specs into formal specifications (`docs/specs/<spec-name>.md`).
 
-One register for both Workers (`client`, `admin`). Each item names the service(s) it touches. New items take the next free ID (`TODO-021`).
+One register for both Workers (`client`, `admin`). Each item names the service(s) it touches. New items take the next free ID (`TODO-023`).
 
 ---
 
@@ -55,6 +55,8 @@ Until 2026-11-24 `client` and `admin` kept separate registers and some IDs colli
 | `TODO-018` | Pre-rendered body for hot master-data endpoints if CPU on a miss is too high (`P2-PS1`) | client | Medium | PROPOSED | SPEC-002a plan audit | - |
 | `TODO-019` | Contract conformance test generated from `openapi.yaml` (`P2-PS2`) | client | Low | PROPOSED | SPEC-002a plan audit | - |
 | `TODO-020` | Cache hit-ratio and miss-CPU observability (`P2-PS3`) | client | Low | PROPOSED | SPEC-002a plan audit | - |
+| `TODO-021` | Cross-origin write to a master-data path answers 403, not 405: document and test it | client | Low | PROPOSED | SPEC-002a verification | - |
+| `TODO-022` | Replace the `unsafe` no-op waker in `client/tests/support` with `Waker::noop()` | client | Low | PROPOSED | SPEC-002a verification | - |
 
 ---
 
@@ -317,6 +319,34 @@ Until 2026-11-24 `client` and `admin` kept separate registers and some IDs colli
   - Use Workers Analytics or the GraphQL API to chart hit ratio and CPU time per endpoint.
 - **Graduation / Promotion Criteria**:
   - The frontend reads master data from the API in production.
+
+### [TODO-021] Cross-origin write to a master-data path answers 403, not 405 (`V-PS1`)
+- **Status**: `PROPOSED`
+- **Service**: client
+- **Discovered On**: 2026-11-26
+- **Discovered By / During**: SPEC-002a verification (OWASP A05 review of `middleware/security.rs`)
+- **Priority**: `P3 (Low)`
+- **Why Not Now?**: The behavior is the stricter, safe SPEC-001 CSRF guard and no browser flow depends on it. D12 and the contract only describe same-origin and allowlisted-origin writes.
+- **Context & Problem Statement**:
+  A POST, PUT, PATCH or DELETE that carries an `Origin` not on the allowlist is rejected with `403 FORBIDDEN` by the security pipeline before routing, so it never reaches the 405 fallback. Scenario 6 and D12 say writes on a known path return 405. The tests cover no-Origin and allowlisted-Origin writes only.
+- **Proto-Spec Sketch (Suggested Approach)**:
+  - Add one sentence to `docs/api/client/openapi.yaml` (errors section) and one test: POST `/v1/cards` with `Origin: https://evil.example.com` returns 403 with the envelope and `no-store`, and does not read D1.
+- **Graduation / Promotion Criteria**:
+  - The next change to the client contract or the security pipeline.
+
+### [TODO-022] Replace the `unsafe` no-op waker in `client/tests/support` (`V-PS2`)
+- **Status**: `PROPOSED`
+- **Service**: client
+- **Discovered On**: 2026-11-26
+- **Discovered By / During**: SPEC-002a verification (standards audit, grep for `unsafe`)
+- **Priority**: `P3 (Low)`
+- **Why Not Now?**: Test-only code, harmless, and outside the SPEC-002a acceptance criteria.
+- **Context & Problem Statement**:
+  `block_on` in `client/tests/support/mod.rs` builds a `Waker` with `unsafe { Waker::from_raw(...) }`. The workspace sets `rust-version = "1.85"`, and `Waker::noop()` is stable since 1.85, so the `unsafe` block is not needed.
+- **Proto-Spec Sketch (Suggested Approach)**:
+  - Use `Context::from_waker(Waker::noop())`, rerun `cargo test -p backend-client` and clippy.
+- **Graduation / Promotion Criteria**:
+  - Next time `client/tests/support` is edited.
 
 ---
 

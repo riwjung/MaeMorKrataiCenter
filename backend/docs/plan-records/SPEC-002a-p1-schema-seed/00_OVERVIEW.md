@@ -1,10 +1,10 @@
 # Plan 00: Overview & Task Manifest (`SPEC-002a-p1-schema-seed`)
 
 - **Spec**: [SPEC-002a](../../specs/SPEC-002a-master-data-schema-seed-public-read.md) (normative data rules: [SPEC-002 sections 4.1 to 4.4](../../specs/SPEC-002-master-data-to-backend.md))
-- **Estimate / Shared Contract**: [SPEC-002a-ESTIMATE.md](../SPEC-002a-ESTIMATE.md)
+- **Estimate / Shared Contract**: [SPEC-002a-ESTIMATE.md](../SPEC-002a/SPEC-002a-ESTIMATE.md)
 - **Sibling plan**: `SPEC-002a-p2-public-read` (the `client` read path; not planned here)
 - **Created**: 2026-11-25
-- **Status**: IN_PROGRESS (aligned by the Plan Auditor, see `../SPEC-002a-PLAN-AUDIT.md`; execution order across both plans is in section 2 of that file)
+- **Status**: COMPLETED (verified 2026-11-26) (aligned by the Plan Auditor, see `../SPEC-002a/SPEC-002a-PLAN-AUDIT.md`; execution order across both plans is in section 2 of that file)
 
 ## 1. Objective & Architecture Impact
 This plan delivers the database half of SPEC-002a:
