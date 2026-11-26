@@ -56,6 +56,9 @@ dev-admin: ## Run admin Worker locally (wrangler dev)
 dev-client: ## Run client Worker locally (wrangler dev)
 	cd client && npx wrangler dev
 
+smoke-local: ## Local smoke test: migrate + seed local D1, run client, curl the master-data GETs
+	bash scripts/smoke-master-data.sh
+
 # Migrations are shared (../migrations) and applied through the admin worker's D1 binding.
 migrate-local: ## Apply D1 migrations to local state
 	cd admin && npx wrangler d1 migrations apply DB --local
