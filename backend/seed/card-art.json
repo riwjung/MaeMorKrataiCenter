@@ -1,0 +1,744 @@
+{
+  "cards": [
+    {
+      "id": "the-fool",
+      "art": "/cards/v3/the-fool-e11e1ee168a4.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "e11e1ee168a484e8002b3f17175cdd9f54fe69b5faa754c056f9614bdd70e160",
+      "bytes": 25866
+    },
+    {
+      "id": "the-magician",
+      "art": "/cards/v3/the-magician-672852b52815.webp",
+      "width": 687,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 894,
+      "sha256": "672852b52815810c839c51e5f4fda34ad0f037965fce766f40e6f9aa9d76e47f",
+      "bytes": 33390
+    },
+    {
+      "id": "the-high-priestess",
+      "art": "/cards/v3/the-high-priestess-434cbc34be30.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "434cbc34be3083f1b1eb399d3dc34c5eda1a7773abfb1f2516c2150adde9dc53",
+      "bytes": 30668
+    },
+    {
+      "id": "the-empress",
+      "art": "/cards/v3/the-empress-f31631235e09.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "f31631235e09ab6c425289e26e93e76e8dae523f97a826185c40c0639963f461",
+      "bytes": 49630
+    },
+    {
+      "id": "the-emperor",
+      "art": "/cards/v3/the-emperor-6fa98368e9c9.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "6fa98368e9c90984c31dceab73d0222b0590b8160d8e365406f0b45bca3ff325",
+      "bytes": 27700
+    },
+    {
+      "id": "the-hierophant",
+      "art": "/cards/v3/the-hierophant-09c3678344a8.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "09c3678344a860c0ff4d6d03689b645d5b656d962e5bf3aa99799fd52e518207",
+      "bytes": 35648
+    },
+    {
+      "id": "the-lovers",
+      "art": "/cards/v3/the-lovers-943ebdc977c2.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "943ebdc977c2878b63e4b32cdf6e73c338ca57c71bb6435556ded45b036c00c0",
+      "bytes": 32378
+    },
+    {
+      "id": "the-chariot",
+      "art": "/cards/v3/the-chariot-14646e96b6b0.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "14646e96b6b09c8ea641e9faf058b7f87d0dd22406564fbbb5ef48f361fb435e",
+      "bytes": 28668
+    },
+    {
+      "id": "strength",
+      "art": "/cards/v3/strength-df125fa499e4.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "df125fa499e4f18b82ebf81d35d363eb78c825e81abe4682a2dd31f1b9a3e327",
+      "bytes": 30566
+    },
+    {
+      "id": "the-hermit",
+      "art": "/cards/v3/the-hermit-6aaf9bd4b830.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "6aaf9bd4b83058d5f937438e6de77a81b3306a06fae1913639cb7cd6057e51cc",
+      "bytes": 28086
+    },
+    {
+      "id": "wheel-of-fortune",
+      "art": "/cards/v3/wheel-of-fortune-90ab4bf1629f.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "90ab4bf1629fcc61d8f61d0764b29624575e5807bcc78a9d5540f32c4fdeffec",
+      "bytes": 51914
+    },
+    {
+      "id": "justice",
+      "art": "/cards/v3/justice-de9657e8967d.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "de9657e8967d251d3af07f894ca8d5ad9c83da8f3546d8b7e084a30fe922cba4",
+      "bytes": 37240
+    },
+    {
+      "id": "the-hanged-man",
+      "art": "/cards/v3/the-hanged-man-4661d98a7589.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "4661d98a758975df80f41c1c7722a6015ae3e2eb7e61240a9306f598a8d6ccbb",
+      "bytes": 34668
+    },
+    {
+      "id": "death",
+      "art": "/cards/v3/death-17e56f29527c.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "17e56f29527cc05f01978ce9afeddcfb9f9fd8603fc5e637c10b0eda2b63a9c6",
+      "bytes": 48052
+    },
+    {
+      "id": "temperance",
+      "art": "/cards/v3/temperance-24cdaac7c3a0.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "24cdaac7c3a01d2e65a8417ae91ec62c937ee0cfbb548fa79d29cc623cd62524",
+      "bytes": 34342
+    },
+    {
+      "id": "the-devil",
+      "art": "/cards/v3/the-devil-931cc2be3950.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "931cc2be3950151904868961f57dca1b55c0632f1b87b18db93d721d93b68bc6",
+      "bytes": 38880
+    },
+    {
+      "id": "the-tower",
+      "art": "/cards/v3/the-tower-90053bb59594.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "90053bb595946aa55d08a8e914521af4254a733c3a9345ab2120b0e440be6e73",
+      "bytes": 31450
+    },
+    {
+      "id": "the-star",
+      "art": "/cards/v3/the-star-2711943f1626.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "2711943f1626c9000dc0eee307f5f9b4ad890c34f681bcea398387b37a8310c3",
+      "bytes": 31204
+    },
+    {
+      "id": "the-moon",
+      "art": "/cards/v3/the-moon-73b6f925d5fe.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "73b6f925d5fefeb7f280b36451af041bbeb0774a1d4bb247d150e3e7517f23fe",
+      "bytes": 31160
+    },
+    {
+      "id": "the-sun",
+      "art": "/cards/v3/the-sun-35688c121572.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "35688c1215725397fc40adef4c2e1e1b5bde95e8d3379e512282ac6901fbf4d0",
+      "bytes": 42844
+    },
+    {
+      "id": "judgement",
+      "art": "/cards/v3/judgement-b99aac59b294.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "b99aac59b29442fc0bfc6dde37b76b98b3d3fc2eb6591caa69ebacfe3ba57d7a",
+      "bytes": 28242
+    },
+    {
+      "id": "the-world",
+      "art": "/cards/v3/the-world-ba3d07d627c5.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "ba3d07d627c5ce71af3c86823bef4da314933facd0727aa92630f35b55c5bf12",
+      "bytes": 42888
+    },
+    {
+      "id": "ace-of-wands",
+      "art": "/cards/v3/ace-of-wands-45d1eafd3a6a.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "45d1eafd3a6a830ad014ce3318c82b8f3620736afd83de945fdd8492c7c536a0",
+      "bytes": 21828
+    },
+    {
+      "id": "two-of-wands",
+      "art": "/cards/v3/two-of-wands-df15160836cb.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "df15160836cb4edbc39052eb40c9a63d1d52c44ba70da6f650e5a974e0afffe6",
+      "bytes": 24662
+    },
+    {
+      "id": "three-of-wands",
+      "art": "/cards/v3/three-of-wands-43e05e3ca70a.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "43e05e3ca70abbf426d3942bc46e163f126ee4185f1de4a19e782d9ce0061fee",
+      "bytes": 23306
+    },
+    {
+      "id": "four-of-wands",
+      "art": "/cards/v3/four-of-wands-89dc373102bd.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "89dc373102bd266898cec40ef540d1ebb62f3e47ee7e3c568e68587828b77fd6",
+      "bytes": 33120
+    },
+    {
+      "id": "five-of-wands",
+      "art": "/cards/v3/five-of-wands-a0cf5daa2c1a.webp",
+      "width": 1632,
+      "height": 2624,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "a0cf5daa2c1ad1b3ce567417ff1552811bcb089d325d8b23e6296770d5895b52",
+      "bytes": 30850
+    },
+    {
+      "id": "seven-of-wands",
+      "art": "/cards/v3/seven-of-wands-1b77adb8b01a.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "1b77adb8b01a1eeca259ed7b73faf9770c1fbe37974c6bcda3da92722132f4c7",
+      "bytes": 29252
+    },
+    {
+      "id": "eight-of-wands",
+      "art": "/cards/v3/eight-of-wands-55e07229ab36.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "55e07229ab3619ece08dc3962f741058e39a92843abab4ff5e0268edb6fc6005",
+      "bytes": 42368
+    },
+    {
+      "id": "ten-of-wands",
+      "art": "/cards/v3/ten-of-wands-1827dad5ac65.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "1827dad5ac65147faf2bdc5e142b1e72f59c7eb6272dc7db32752151d4158431",
+      "bytes": 36328
+    },
+    {
+      "id": "page-of-wands",
+      "art": "/cards/v3/page-of-wands-19fa2d2ed2dd.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "19fa2d2ed2dd49cbd126bbc28624b788152bfbee7f748d2a19af17b926def4e1",
+      "bytes": 30588
+    },
+    {
+      "id": "knight-of-wands",
+      "art": "/cards/v3/knight-of-wands-6d14638da8de.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "6d14638da8deb34cbd8144ba589c6408ae3ba01244f44df922e6241b00510679",
+      "bytes": 30806
+    },
+    {
+      "id": "queen-of-wands",
+      "art": "/cards/v3/queen-of-wands-466a6524094c.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "466a6524094cd0c4a5d09c121c2e459c20ec8b492624971e323647684acbd52c",
+      "bytes": 26674
+    },
+    {
+      "id": "king-of-wands",
+      "art": "/cards/v3/king-of-wands-98a256b84971.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "98a256b849715cae91d23941161395424bffdd094037a2917dbc1c86bbc105a3",
+      "bytes": 33060
+    },
+    {
+      "id": "ace-of-cups",
+      "art": "/cards/v3/ace-of-cups-b6ffd64cbf47.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "b6ffd64cbf478e4cb61b232d0cc2787a4ad8cd3aa11e686e02ae74cbd81d6806",
+      "bytes": 23862
+    },
+    {
+      "id": "two-of-cups",
+      "art": "/cards/v3/two-of-cups-606f0a69e17a.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "606f0a69e17a0fbb435b8123b92ee4d890e29474dafe95624101a222794e626e",
+      "bytes": 24836
+    },
+    {
+      "id": "three-of-cups",
+      "art": "/cards/v3/three-of-cups-325a36f58fb8.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "325a36f58fb8cf24efef4fda1fd8aff1cd2512b4544e9fc10c19252b2fe4a129",
+      "bytes": 26758
+    },
+    {
+      "id": "four-of-cups",
+      "art": "/cards/v3/four-of-cups-54950b513093.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "54950b5130935e9f692f763bcfadb2670ac1038336ecf9ab65dd47d5387f505a",
+      "bytes": 20314
+    },
+    {
+      "id": "five-of-cups",
+      "art": "/cards/v3/five-of-cups-cdaa751f5a99.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "cdaa751f5a990a55e64f54c5d7cc279e00e7afbb4a5023a960e29e2e0f8686b5",
+      "bytes": 24128
+    },
+    {
+      "id": "six-of-cups",
+      "art": "/cards/v3/six-of-cups-2984972a4a6a.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "2984972a4a6a369affc37a20b0492357e829be58ef33f66f6d266ebf2f94718d",
+      "bytes": 33176
+    },
+    {
+      "id": "seven-of-cups",
+      "art": "/cards/v3/seven-of-cups-7d76b75228db.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "7d76b75228db632a30a20e576f20c51071a469527e3206373d1ab4e35aa85963",
+      "bytes": 31300
+    },
+    {
+      "id": "eight-of-cups",
+      "art": "/cards/v3/eight-of-cups-abf1fa9db65e.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "abf1fa9db65ee2e0ff10ca209577b7cd4613063fc5ee6f80572303f3c1550ad9",
+      "bytes": 24430
+    },
+    {
+      "id": "nine-of-cups",
+      "art": "/cards/v3/nine-of-cups-06521f6ff7f8.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "06521f6ff7f8419da144aed76694051cc60b719abb6f058f96d8ff47bfd4c822",
+      "bytes": 29120
+    },
+    {
+      "id": "ten-of-cups",
+      "art": "/cards/v3/ten-of-cups-3056ab1f3490.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "3056ab1f34904fb2f0d34fb05d0e479abf5be3a7b28855127bfc115156077130",
+      "bytes": 39248
+    },
+    {
+      "id": "page-of-cups",
+      "art": "/cards/v3/page-of-cups-efd191882c0d.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "efd191882c0d05898c44d0d9a94b8ea0a5e5e99550922f43c06b1f9dbaa7079e",
+      "bytes": 24316
+    },
+    {
+      "id": "knight-of-cups",
+      "art": "/cards/v3/knight-of-cups-26f86538f151.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "26f86538f151a209ae5ff87b88149ccef9bed5b329bd332dddf08e6f3edc91eb",
+      "bytes": 29498
+    },
+    {
+      "id": "queen-of-cups",
+      "art": "/cards/v3/queen-of-cups-ebb98a538a92.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "ebb98a538a92930b3bdb46e75538e55bb55c96b46a716c37a0aac5136a4ea1e0",
+      "bytes": 26778
+    },
+    {
+      "id": "king-of-cups",
+      "art": "/cards/v3/king-of-cups-cf7c5b2fd5e6.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "cf7c5b2fd5e6a4bedb7d8caedcb587d7ab3dab6f78b36a4c4cebe1f62847d0a7",
+      "bytes": 31856
+    },
+    {
+      "id": "ace-of-swords",
+      "art": "/cards/v3/ace-of-swords-6dc1f871bedb.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "6dc1f871bedb1c4d97690138574a7ce3a49f6f54cd700fb619de0e370b6cae8c",
+      "bytes": 24730
+    },
+    {
+      "id": "two-of-swords",
+      "art": "/cards/v3/two-of-swords-7865f20d4103.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "7865f20d41032586fc0695fe9bd3ba6ffe33d2023b2f18e1b55f1c8e1388b133",
+      "bytes": 24862
+    },
+    {
+      "id": "three-of-swords",
+      "art": "/cards/v3/three-of-swords-ff57c400e91d.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "ff57c400e91d74ae68b164594a8895870647cfb6156a48386860041e6f669142",
+      "bytes": 27860
+    },
+    {
+      "id": "four-of-swords",
+      "art": "/cards/v3/four-of-swords-f4ec0bfaff4a.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "f4ec0bfaff4a7c82abe151ee3bdd8eb0389701d1ae20043c1c024076fe107876",
+      "bytes": 28800
+    },
+    {
+      "id": "five-of-swords",
+      "art": "/cards/v3/five-of-swords-db4cf6be2d60.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "db4cf6be2d608533383b12597346c50df4286047902b2d21d8ac79b1b5838653",
+      "bytes": 26760
+    },
+    {
+      "id": "six-of-swords",
+      "art": "/cards/v3/six-of-swords-bb3ec3314900.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "bb3ec33149000ff538d418cc76c5ca7d83f85cccf2379f43751cfae1b0312b53",
+      "bytes": 33844
+    },
+    {
+      "id": "seven-of-swords",
+      "art": "/cards/v3/seven-of-swords-846e4a29f8f0.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "846e4a29f8f0f8dc03bfed95861f65749f0ffbf692806ee975f2ebf04d1ca6df",
+      "bytes": 25724
+    },
+    {
+      "id": "eight-of-swords",
+      "art": "/cards/v3/eight-of-swords-54ae48b71d5d.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "54ae48b71d5df9c7d9fa240951c0c800153fe4e050c2854b09ddb94c203ca7f8",
+      "bytes": 27274
+    },
+    {
+      "id": "nine-of-swords",
+      "art": "/cards/v3/nine-of-swords-f3f3b2e3dbd5.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "f3f3b2e3dbd5e89ff7962ba1125832364540ab1f9efc17225cc70f24e268756b",
+      "bytes": 25780
+    },
+    {
+      "id": "ten-of-swords",
+      "art": "/cards/v3/ten-of-swords-7d7f06a133dc.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "7d7f06a133dc6e5b1f2b36f23c4325e25c9a4f91bbff5ff2580193a521e1e196",
+      "bytes": 25480
+    },
+    {
+      "id": "page-of-swords",
+      "art": "/cards/v3/page-of-swords-19f1d1299689.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "19f1d1299689cc416058280909c70f97697867818c7192645ae2bb8bc0aa5540",
+      "bytes": 29054
+    },
+    {
+      "id": "knight-of-swords",
+      "art": "/cards/v3/knight-of-swords-f89799837e08.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "f89799837e0839998afa9f672d954a29eeba994e798562a9d8459255d80c81f4",
+      "bytes": 29540
+    },
+    {
+      "id": "queen-of-swords",
+      "art": "/cards/v3/queen-of-swords-1adc20d7d814.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "1adc20d7d8144248e687d49517fb23d5ef3783a4892855c4fe7d75058e91c3fd",
+      "bytes": 25058
+    },
+    {
+      "id": "king-of-swords",
+      "art": "/cards/v3/king-of-swords-63546742343f.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "63546742343f30cb6060579e2e2e7aed9ed78beb777b99ae37a5b918eee43a31",
+      "bytes": 27908
+    },
+    {
+      "id": "ace-of-pentacles",
+      "art": "/cards/v3/ace-of-pentacles-11081f67ab53.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "11081f67ab53b6a76294d9414ada9e71d5cd3de675d7f0a118f4e21e658f9500",
+      "bytes": 26718
+    },
+    {
+      "id": "two-of-pentacles",
+      "art": "/cards/v3/two-of-pentacles-9580c888bc0a.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "9580c888bc0a7854b55d424b97bb5c7a6a00fc1faf2f1fe32ac279a85187c57e",
+      "bytes": 31218
+    },
+    {
+      "id": "three-of-pentacles",
+      "art": "/cards/v3/three-of-pentacles-002cf6c8ff28.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "002cf6c8ff28f9cca5ac765603cba625e70535afeda8972e1062b87d0a7250ef",
+      "bytes": 31274
+    },
+    {
+      "id": "four-of-pentacles",
+      "art": "/cards/v3/four-of-pentacles-d61adcd2f4cc.webp",
+      "width": 1632,
+      "height": 2624,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "d61adcd2f4cc73162178d1dbd8e7d77aae85cb16828bcfe2ad0a0ff299c3d5fa",
+      "bytes": 27274
+    },
+    {
+      "id": "five-of-pentacles",
+      "art": "/cards/v3/five-of-pentacles-18cabf53a209.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "18cabf53a209a5f4cef610e473211f58043f028476ea03b662a342389b8278db",
+      "bytes": 34066
+    },
+    {
+      "id": "six-of-pentacles",
+      "art": "/cards/v3/six-of-pentacles-ae1a93a3e8f0.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "ae1a93a3e8f0d2a1ccc2fd72697afecf215c36292dee01352767045413454b4c",
+      "bytes": 31750
+    },
+    {
+      "id": "seven-of-pentacles",
+      "art": "/cards/v3/seven-of-pentacles-86521fc975b6.webp",
+      "width": 1632,
+      "height": 2624,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "86521fc975b603f3f2f6c85e80ad27776df76a62d95e6be13611c244168f2ec7",
+      "bytes": 38920
+    },
+    {
+      "id": "eight-of-pentacles",
+      "art": "/cards/v3/eight-of-pentacles-3f15fa2f2c2b.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "3f15fa2f2c2bb64c15e9aeebbf5bf9f79467764e848d3cbf8d5552065174b4af",
+      "bytes": 34416
+    },
+    {
+      "id": "nine-of-pentacles",
+      "art": "/cards/v3/nine-of-pentacles-941188df2bba.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "941188df2bbad77b604319992d7605534bf72a96073d821637a08ab1f503b0b2",
+      "bytes": 55956
+    },
+    {
+      "id": "ten-of-pentacles",
+      "art": "/cards/v3/ten-of-pentacles-84fa0d349cbb.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "84fa0d349cbb9b69246b452608e5826b76c252d021516363a2e7ea549a967745",
+      "bytes": 63296
+    },
+    {
+      "id": "knight-of-pentacles",
+      "art": "/cards/v3/knight-of-pentacles-88bb30206c8c.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "88bb30206c8ce133d24085c3e7b1d281e8965f49aa190748ddeb00de3068106f",
+      "bytes": 29892
+    },
+    {
+      "id": "queen-of-pentacles",
+      "art": "/cards/v3/queen-of-pentacles-a53c6d0657b1.webp",
+      "width": 637,
+      "height": 1024,
+      "renderedWidth": 600,
+      "renderedHeight": 965,
+      "sha256": "a53c6d0657b12fe78cdbb5f168e41f7e1a8c62318b44afcfbecb73216758f448",
+      "bytes": 44290
+    }
+  ]
+}

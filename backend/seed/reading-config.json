@@ -1,0 +1,204 @@
+{
+  "categories": [
+    {
+      "key": "love",
+      "label": "ความรัก",
+      "icon": "♡",
+      "hint": "ความรู้สึกและความสัมพันธ์"
+    },
+    {
+      "key": "work",
+      "label": "การงาน",
+      "icon": "✧",
+      "hint": "เส้นทางที่กำลังเติบโต"
+    },
+    {
+      "key": "money",
+      "label": "การเงิน",
+      "icon": "☾",
+      "hint": "ความมั่นคงและการวางแผน"
+    },
+    {
+      "key": "life",
+      "label": "ภาพรวมชีวิต",
+      "icon": "✺",
+      "hint": "กลับมาฟังเสียงข้างใน"
+    }
+  ],
+  "situations": {
+    "love": [
+      {
+        "key": "single",
+        "label": "คนโสด"
+      },
+      {
+        "key": "crush",
+        "label": "แอบชอบ"
+      },
+      {
+        "key": "talking",
+        "label": "คุยกัน"
+      },
+      {
+        "key": "complicated",
+        "label": "ซับซ้อน"
+      },
+      {
+        "key": "partnered",
+        "label": "มีแฟน"
+      },
+      {
+        "key": "ex_partner",
+        "label": "เลิกกัน"
+      }
+    ],
+    "work": [
+      {
+        "key": "current_job",
+        "label": "งานปัจจุบัน"
+      },
+      {
+        "key": "job_seeking",
+        "label": "มองหางานใหม่"
+      },
+      {
+        "key": "own_business",
+        "label": "ธุรกิจของตัวเอง"
+      }
+    ],
+    "money": [
+      {
+        "key": "income_expenses",
+        "label": "รายรับและรายจ่าย"
+      },
+      {
+        "key": "saving_plan",
+        "label": "วางแผนเก็บเงิน"
+      },
+      {
+        "key": "long_term_goals",
+        "label": "เป้าหมายระยะยาว"
+      }
+    ],
+    "life": [
+      {
+        "key": "in_transition",
+        "label": "กำลังเปลี่ยนแปลง"
+      },
+      {
+        "key": "facing_decision",
+        "label": "มีเรื่องต้องตัดสินใจ"
+      },
+      {
+        "key": "self_reflection",
+        "label": "อยากทบทวนตัวเอง"
+      }
+    ]
+  },
+  "suggestions": {
+    "love": [
+      {
+        "id": "love-1",
+        "text": "ความสัมพันธ์นี้กำลังพาฉันไปทางไหน?"
+      },
+      {
+        "id": "love-2",
+        "text": "มีอะไรในใจที่ฉันควรทำความเข้าใจ?"
+      },
+      {
+        "id": "love-3",
+        "text": "ฉันควรดูแลหัวใจตัวเองอย่างไร?"
+      }
+    ],
+    "work": [
+      {
+        "id": "work-1",
+        "text": "ฉันอยากเห็นอะไรเปลี่ยนไปในเส้นทางการทำงาน?"
+      },
+      {
+        "id": "work-2",
+        "text": "อะไรทำให้ฉันรู้สึกติดขัดกับงานตอนนี้?"
+      },
+      {
+        "id": "work-3",
+        "text": "ฉันอยากเติบโตในทิศทางไหน?"
+      }
+    ],
+    "money": [
+      {
+        "id": "money-1",
+        "text": "ฉันอยากปรับนิสัยการใช้เงินเรื่องไหน?"
+      },
+      {
+        "id": "money-2",
+        "text": "ความมั่นคงมีความหมายอย่างไรสำหรับฉัน?"
+      },
+      {
+        "id": "money-3",
+        "text": "เป้าหมายทางการเงินที่สำคัญตอนนี้คืออะไร?"
+      }
+    ],
+    "life": [
+      {
+        "id": "life-1",
+        "text": "ช่วงนี้ฉันควรกลับมาฟังตัวเองเรื่องอะไร?"
+      },
+      {
+        "id": "life-2",
+        "text": "มีอะไรที่ฉันพร้อมจะปล่อยวาง?"
+      },
+      {
+        "id": "life-3",
+        "text": "ฉันอยากให้ชีวิตค่อย ๆ เปลี่ยนไปอย่างไร?"
+      }
+    ]
+  },
+  "positions": [
+    {
+      "key": "past",
+      "label": "อดีต"
+    },
+    {
+      "key": "present",
+      "label": "ปัจจุบัน"
+    },
+    {
+      "key": "future",
+      "label": "อนาคต"
+    }
+  ],
+  "uncategorized_situations": [],
+  "uncategorized_suggestions": [],
+  "love_statuses": [
+    {
+      "key": "single",
+      "daily_label": "คนโสด",
+      "reading_label": "คนโสด"
+    },
+    {
+      "key": "crush",
+      "daily_label": "คนแอบชอบ",
+      "reading_label": "แอบชอบ"
+    },
+    {
+      "key": "talking",
+      "daily_label": "คนคุย",
+      "reading_label": "คุยกัน"
+    },
+    {
+      "key": "complicated",
+      "daily_label": "ความสัมพันธ์ซับซ้อน",
+      "reading_label": "ซับซ้อน"
+    },
+    {
+      "key": "partnered",
+      "daily_label": "คนมีแฟน",
+      "reading_label": "มีแฟน"
+    },
+    {
+      "key": "ex_partner",
+      "daily_label": "คนรักเก่า",
+      "reading_label": "เลิกกัน"
+    }
+  ]
+}
