@@ -1,0 +1,99 @@
+---
+model: haiku
+effort: low
+reason: "Mechanical Makefile edit with exact diff; verification is a fixed list of local commands"
+---
+
+# Task 05: Makefile seed targets (`seed-build`, `seed-local`, `seed-staging`, `seed-prod`)
+
+- **Executor / Coder Rule**:
+  1. ALWAYS read [00_OVERVIEW.md](./00_OVERVIEW.md) first before starting execution.
+  2. Execute ONLY this single task. When done and verified, terminate so a fresh Executor / Coder agent handles the next task.
+  3. Apply the exact diff below without assumption or improvisation. **Never run `make seed-staging` or `make seed-prod`** (`[CLOUD]`, owner only).
+  4. If a command or check in this task fails (build, lint, format, script or hash mismatch), that is a **plan defect**. Stop and report it as a deviation (workflow 03). Never silence a lint with `#[allow]`, never improvise a fix.
+
+Depends on task 04 (`seed-build` binary) and task 03 (migration). All commands run from `backend/` with the lean env:
+```bash
+export CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0 CARGO_BUILD_JOBS=4 PATH="$HOME/.cargo/bin:$PATH"
+```
+
+## 1. Action Items
+- [ ] Red: show that the targets do not exist.
+- [ ] Apply the Makefile diff.
+- [ ] Green: build, negative build, local load twice, row count, `.gitignore` check.
+
+## 2. Harness
+None. `seed/build/` is already ignored by the existing `build/` line in `backend/.gitignore`; no `.gitignore` change.
+
+## 3. Tests
+No new Rust tests: the build behavior is covered by task 04 (`seed_files`, `seed_validation`, `main.rs` stale-file test, D1 scenario 27). This task's gate is the command list in section 6.
+
+## 4. Red
+```bash
+make seed-build
+```
+Expected: FAIL with `make: *** No rule to make target 'seed-build'.  Stop.`
+
+## 5. Implementation
+
+### File: `Makefile`, exact diffs
+```diff
+ .PHONY: help check test build-admin build-client dev-admin dev-client \
+ 	test-d1 migrate-local migrate-staging migrate-prod create-user \
++	seed-build seed-local seed-staging seed-prod \
+ 	cf-whoami cf-bootstrap cf-secret cf-dry-run deploy-staging deploy-prod
+```
+Insert this block directly after the `migrate-prod` target and before the `create-user` comment:
+```make
+# Seed (D07): seed/*.json -> seed/build/seed.sql (one upsert per row, parents first), then wrangler --file.
+# The upsert returns seeded rows to their seed values (admin edits to them are lost) and leaves
+# other rows alone. Run the matching migrate-* target first.
+seed-build: ## Validate seed/*.json and write seed/build/seed.sql (fails on a dropped field)
+	cargo run -q -p seed-build -- --seed-dir=seed --out=seed/build/seed.sql
+
+seed-local: seed-build ## Upsert the seed into local D1 (run make migrate-local first)
+	cd admin && npx wrangler d1 execute DB --local --file ../seed/build/seed.sql
+
+seed-staging: seed-build ## [CLOUD] Upsert the seed into staging D1 (overwrites admin edits to seeded rows)
+	@cd admin && npx wrangler whoami
+	@read -r -p "Upsert seed/build/seed.sql into STAGING D1 in the account above? Seeded rows are overwritten. [y/N] " ok; \
+		[[ "$$ok" == "y" || "$$ok" == "Y" ]] || { echo aborted; exit 1; }
+	cd admin && npx wrangler d1 execute DB --env staging --remote --file ../seed/build/seed.sql
+
+seed-prod: seed-build ## [CLOUD] Upsert the seed into prod D1 (overwrites admin edits to seeded rows)
+	@cd admin && npx wrangler whoami
+	@read -r -p "Upsert seed/build/seed.sql into PROD D1 in the account above? Seeded rows are overwritten. [y/N] " ok; \
+		[[ "$$ok" == "y" || "$$ok" == "Y" ]] || { echo aborted; exit 1; }
+	cd admin && npx wrangler d1 execute DB --env prod --remote --file ../seed/build/seed.sql
+```
+Recipe lines start with a TAB, as in the rest of the Makefile.
+
+## 6. Green + Standards Check
+```bash
+make help | grep -E 'seed-|test-d1'
+make seed-build
+head -c 120 seed/build/seed.sql; echo
+git check-ignore seed/build/seed.sql
+
+# Negative: a dropped field fails before any D1 call and leaves no output file.
+BAD="$(mktemp -d)"; cp seed/*.json "$BAD/"
+python3 -c "import json,sys; p=sys.argv[1]+'/cards.json'; d=json.load(open(p)); d[0]['source_url']='x'; json.dump(d,open(p,'w'),ensure_ascii=False)" "$BAD"
+cargo run -q -p seed-build -- --seed-dir="$BAD" --out="$BAD/out.sql"; echo "exit=$?"; test ! -e "$BAD/out.sql" && echo "no output: OK"
+rm -rf "$BAD"
+
+# Local load, twice (idempotent).
+make migrate-local
+make seed-local
+make seed-local
+cd admin && npx wrangler d1 execute DB --local --json --command "SELECT (SELECT COUNT(*) FROM cards) AS cards, (SELECT COUNT(*) FROM daily_love_texts WHERE text IS NULL) AS null_daily, (SELECT COUNT(*) FROM suggestions) AS suggestions, (SELECT COUNT(*) FROM audit_events WHERE event_type LIKE 'master_data%') AS seed_audit"; cd ..
+```
+Expected:
+- `make help` lists `test-d1`, `seed-build`, `seed-local`, `seed-staging` and `seed-prod`; the last two say `[CLOUD]`.
+- `make seed-build` prints `seed-build: wrote 1669 statements to seed/build/seed.sql`.
+- `head` shows `-- Generated by tools/seed-build from seed/*.json (SPEC-002a). Do not edit.`
+- `git check-ignore` prints `seed/build/seed.sql`.
+- The negative run prints `seed-build: seed/cards.json contains the dropped field or provenance "source_url" (SPEC-002 section 4.2)`, then `exit=1`, then `no output: OK`.
+- Both `make seed-local` runs end with wrangler reporting success (`🚣 ... commands executed successfully` or the equivalent line).
+- The final query returns `"cards": 78`, `"null_daily": 22`, `"suggestions": 12` and `"seed_audit": 0`.
+
+No Rust files change, so no cargo fmt or clippy run is needed.

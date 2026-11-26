@@ -34,6 +34,8 @@ Card images stay in `frontend-client/public/`; the API returns the same relative
 - [D09: Master-data integrity rules](../decisions/D09.md) (schema-level parts)
 - [D10: Deleting a category leaves its items uncategorized](../decisions/D10.md) (nullable `category`, public uncategorized lists)
 - [D11: Split into SPEC-002a / SPEC-002b](../decisions/D11.md)
+- [D12: Client contract review (405 on known paths, 404 on unknown; staging server URL)](../decisions/D12.md)
+- [D13: Workers Cache on `client` (config only, no purge, D05 TTL unchanged)](../decisions/D13.md)
 
 ## 4. Data in Scope
 [SPEC-002 §4.1–4.4](SPEC-002-master-data-to-backend.md#4-data-in-scope) is normative for this spec: sources, the field keep/drop table, English keys and labels, situation keys, suggestion IDs, per-screen ordering, and the integrity rules. §4.5 (admin write validation) belongs to SPEC-002b.
@@ -41,7 +43,7 @@ Card images stay in `frontend-client/public/`; the API returns the same relative
 The schema delivered here is the **complete** master-data schema for SPEC-002: every table, column, foreign key, uniqueness rule and nullable `category` that §4.4, D09 and D10 require, including storage for the daily metadata (`schema_version`, `version`, `updated`, `status`, `scope`, `auto_fallback_to_general_or_spread`). SPEC-002b adds no migration for this data unless its own audit finds a gap and logs a decision.
 
 ## 5. API Surface (contract in `docs/api/`)
-- `../docs/api/client/openapi.yaml` (v0.2.0): `GET /v1/cards`, `/v1/daily-cards`, `/v1/card-art`, `/v1/reading-config`. Public, no auth, D04 rate limit, `Cache-Control: public, max-age=600`.
+- `../docs/api/client/openapi.yaml` (v0.2.1, reviewed by the owner in D12): `GET /v1/cards`, `/v1/daily-cards`, `/v1/card-art`, `/v1/reading-config`. Public, no auth, D04 rate limit, `Cache-Control: public, max-age=600`.
 - The owner reviews the contract against `frontend-client` while planning (D11); any change to it is made in `docs/api/client/openapi.yaml` before the code.
 
 ## 6. Behavioral Requirements (EARS Syntax)
@@ -82,7 +84,7 @@ Scenario numbers 1–6, 27 and 28 are the SPEC-002 numbers. A1 and A2 are new.
 - [ ] Scenario 6: GIVEN the client Worker WHEN a `POST` is sent to `/v1/cards` THEN the response is `405` with the error envelope and `Cache-Control: no-store`, and D1 is unchanged.
 - [ ] Scenario 27: GIVEN a seeded D1 plus one suggestion row inserted directly with a UUIDv4 id (standing in for an admin-created one) WHEN the developer runs the seed again THEN seeded rows equal the seed values, the extra suggestion still exists, and no `audit_events` rows were added by the seed.
 - [ ] Scenario 28: GIVEN `backend/migrations/` WHEN it is inspected THEN it contains DDL only, no seed INSERTs.
-- [ ] Scenario A1: GIVEN a seeded D1 in which, directly in the database, the `work` situations and suggestions are set to `category = null` and the `work` and `love` category rows are deleted, WHEN a visitor requests `GET /v1/reading-config` THEN there is no `work` or `love` category, `uncategorized_situations` holds the 3 work situations (by `sort_order`, then key) followed by the 6 love situations (by `reading_sort_order`), and `uncategorized_suggestions` holds the 3 work suggestions (by `sort_order`, then id).
+- [ ] Scenario A1: GIVEN a seeded D1 in which, directly in the database, the `work` situations and suggestions are set to `category = null`, the three `love` suggestions are deleted (the foreign key forbids deleting `love` while they reference it), and the `work` and `love` category rows are deleted, WHEN a visitor requests `GET /v1/reading-config` THEN there is no `work` or `love` category, `uncategorized_situations` holds the 3 work situations (by `sort_order`, then key) followed by the 6 love situations (by `reading_sort_order`), and `uncategorized_suggestions` holds the 3 work suggestions (by `sort_order`, then id).
 - [ ] Scenario A2: GIVEN the migrations are applied WHEN a test inserts directly (a) a daily entry for card `x-card`, (b) a situation with category `nope`, (c) a love-status text for status `widowed`, and (d) a second card with an existing id THEN D1 rejects each statement with a constraint error and the tables are unchanged.
 
 ## 8. Scope Boundaries
@@ -96,7 +98,9 @@ Scenario numbers 1–6, 27 and 28 are the SPEC-002 numbers. A1 and A2 are new.
 ## 9. Resolved Items
 1. Read/write boundary, order, frontend placement and complexity: D11 (owner, 2026-11-25).
 2. Order inside `uncategorized_situations` when both kinds exist (SPEC-002 left it open): regular uncategorized situations first, then love-derived ones: D11 item 6 (owner, 2026-11-25).
-3. Everything else inherited unchanged from SPEC-002 §9 (keep/drop table, situation keys, `409` with no cascade, Bangkok date, uncached admin reads, audit rounds 1–3).
+3. Contract review (D11 item 5): done 2026-11-25, recorded in D12. A write method on a known path returns `405` with `Allow`; an unknown path returns `404` for any method. Contract bumped to v0.2.1.
+4. Scenario A1 fixture (found while planning, 2026-11-25): the fixture also deletes the three `love` suggestions, because the no-cascade foreign key rejects deleting the `love` category while they reference it. The expected result is unchanged.
+5. Everything else inherited unchanged from SPEC-002 §9 (keep/drop table, situation keys, `409` with no cascade, Bangkok date, uncached admin reads, audit rounds 1–3).
 
 ## 10. Spectre Auditor Review & Sign-Off Checklist
 - **Auditor**: Spectre (`.gb-sdlc/agents/spectre.md`)
@@ -107,6 +111,6 @@ Scenario numbers 1–6, 27 and 28 are the SPEC-002 numbers. A1 and A2 are new.
 - [x] **Acceptance Testability**
 - [x] **Scope Watchdog & Split-Spec Check**
 - [x] **Security Pre-Check**
-- **Notes for the owner's contract review (D11 item 5)**: the client contract says writes on *any* path return `405` and unknown paths `404`; this spec requires `405` on master-data paths, so state which wins for a POST to an unknown path. Its `servers` list still names `api-staging.maemorkratai.com`; staging actually runs on `*.workers.dev`.
+- **Notes for the owner's contract review (D11 item 5)** (resolved in D12, 2026-11-25): the client contract says writes on *any* path return `405` and unknown paths `404`; this spec requires `405` on master-data paths, so state which wins for a POST to an unknown path. Its `servers` list still names `api-staging.maemorkratai.com`; staging actually runs on `*.workers.dev`.
 - **Auditor Sign-Off**: Spectre (`PASSED` on 2026-11-25)
 - **Human Sign-Off**: Owner (`APPROVED` on 2026-11-25)

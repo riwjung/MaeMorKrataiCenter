@@ -7,7 +7,7 @@
 > Rather than letting these ideas get lost or polluting active tasks, capture them here as **Proto-Specs** (Candidate Specs).
 > When the project is ready for its next cycle, **Spectre** reviews this file and graduates high-value proto-specs into formal specifications (`docs/specs/<spec-name>.md`).
 
-One register for both Workers (`client`, `admin`). Each item names the service(s) it touches. New items take the next free ID (`TODO-015`).
+One register for both Workers (`client`, `admin`). Each item names the service(s) it touches. New items take the next free ID (`TODO-021`).
 
 ---
 
@@ -49,6 +49,12 @@ Until 2026-11-24 `client` and `admin` kept separate registers and some IDs colli
 | `TODO-012` | Content Studio Job Queue (Mac Pull Worker) & Social Center | admin | Medium | PROPOSED | SPEC-001 Scoping | - |
 | `TODO-013` | Cloudflare Access Zero Trust Migration & Key Rotation Automation | admin | Medium | PROPOSED | SPEC-001 Auth Design | - |
 | `TODO-014` | Cloudflare Ingestion Pipeline (needs spec) | admin | Medium | PROPOSED | Cloudflare deploy prep | - |
+| `TODO-015` | Apply SPEC-002 §4.5 limits to seed data in `seed-build` (`PROTO-SEED-LIMITS`) | admin | Low | PROPOSED | SPEC-002a plan audit | - |
+| `TODO-016` | Enforce art consistency (D09 item 5) in the database (`PROTO-ART-FK`) | both | Low | PROPOSED | SPEC-002a plan audit | - |
+| `TODO-017` | Pin CI wrangler with a committed lockfile (`PROTO-NPM-LOCK`) | both | Low | PROPOSED | SPEC-002a plan audit | - |
+| `TODO-018` | Pre-rendered body for hot master-data endpoints if CPU on a miss is too high (`P2-PS1`) | client | Medium | PROPOSED | SPEC-002a plan audit | - |
+| `TODO-019` | Contract conformance test generated from `openapi.yaml` (`P2-PS2`) | client | Low | PROPOSED | SPEC-002a plan audit | - |
+| `TODO-020` | Cache hit-ratio and miss-CPU observability (`P2-PS3`) | client | Low | PROPOSED | SPEC-002a plan audit | - |
 
 ---
 
@@ -229,6 +235,88 @@ Until 2026-11-24 `client` and `admin` kept separate registers and some IDs colli
   Deployment prep was requested "with ingestion". Candidates: R2 `PRIVATE_STORAGE` upload event → Queue → consumer Worker; or RAG / knowledge-release ingestion (see `TODO-002`, `TODO-003`).
 - **Graduation / Promotion Criteria**:
   - The owner confirms the ingestion scope; Spectre drafts a spec and logs the decision.
+
+### [TODO-015] Apply SPEC-002 section 4.5 limits to seed data (`PROTO-SEED-LIMITS`)
+- **Status**: `PROPOSED`
+- **Service**: admin
+- **Discovered On**: 2026-11-25
+- **Discovered By / During**: SPEC-002a plan p1 (`tools/seed-build`), plan audit
+- **Priority**: `P3 (Low)`
+- **Why Not Now?**: SPEC-002 section 4.5 belongs to SPEC-002b; the same rules should be shared with the admin validators once they exist.
+- **Context & Problem Statement**:
+  `seed-build` rejects dropped fields, unknown fields, control characters and cross-file inconsistencies, but not the length, key-regex, card-id-regex, `art` pattern or `sha256` format limits of section 4.5.
+- **Graduation / Promotion Criteria**:
+  - SPEC-002b validators exist; move the limits into one shared place and call it from `seed-build`.
+
+### [TODO-016] Enforce art consistency in the database (`PROTO-ART-FK`)
+- **Status**: `PROPOSED`
+- **Service**: both
+- **Discovered On**: 2026-11-25
+- **Discovered By / During**: SPEC-002a plan p1 (migration 0002), plan audit (owner decision: not enforced in the DDL)
+- **Priority**: `P3 (Low)`
+- **Why Not Now?**: Spec section 6 Schema does not list it. `seed-build` checks D09 item 5 and SPEC-002b validates it in code. A composite FK changes how SPEC-002b must order or defer card art updates.
+- **Context & Problem Statement**:
+  D09 item 5 (an art entry's `art` equals its card's `art`; a card with `art: null` has no art entry) is not a database constraint.
+- **Proto-Spec Sketch (Suggested Approach)**:
+  - Unique index on `cards (id, art)` plus composite FK `card_art (card_id, art) REFERENCES cards (id, art)`; SPEC-002b updates both tables in one D1 batch.
+- **Graduation / Promotion Criteria**:
+  - A write path in SPEC-002b shows the code-level check is not enough.
+
+### [TODO-017] Pin CI wrangler with a committed lockfile (`PROTO-NPM-LOCK`)
+- **Status**: `PROPOSED`
+- **Service**: both
+- **Discovered On**: 2026-11-25
+- **Discovered By / During**: SPEC-002a plan p1 (CI job `d1-tests`), plan audit
+- **Priority**: `P3 (Low)`
+- **Why Not Now?**: The deploy workflow already uses an unlocked `npm install`; changing both is a CI hardening task outside SPEC-002a.
+- **Context & Problem Statement**:
+  `d1-tests` pins `wrangler@4.168.0` by version only (no lockfile, transitive dependencies float).
+- **Proto-Spec Sketch (Suggested Approach)**:
+  - Commit `package.json` and `package-lock.json`, use `npm ci` in `backend-ci.yml` and `backend-deploy.yml`; optionally add `cargo deny`.
+- **Graduation / Promotion Criteria**:
+  - Next CI hardening pass (with `TODO-006`).
+
+### [TODO-018] Pre-rendered body for hot master-data endpoints (`P2-PS1`)
+- **Status**: `PROPOSED`
+- **Service**: client
+- **Discovered On**: 2026-11-25
+- **Discovered By / During**: SPEC-002a plan p2 (battleground B1), plan audit
+- **Priority**: `P2 (Medium)`
+- **Why Not Now?**: Workers Cache (D13) makes misses rare and the row-by-row assembly (Option B) is expected to fit 10 ms. The staging CPU measurement decides. It would duplicate the assembly rules.
+- **Context & Problem Statement**:
+  `/v1/cards` (255 KB) and `/v1/daily-cards` (359 KB) may exceed 10 ms CPU on a miss on the Free plan.
+- **Proto-Spec Sketch (Suggested Approach)**:
+  - Render the whole body in SQL (battleground Option C), or store a pre-rendered JSON blob updated by the seed and admin writes.
+- **Graduation / Promotion Criteria**:
+  - Staging p99 CPU of a miss is above about 8 ms (owner decides between this and the Paid plan).
+
+### [TODO-019] Contract conformance test from `openapi.yaml` (`P2-PS2`)
+- **Status**: `PROPOSED`
+- **Service**: client
+- **Discovered On**: 2026-11-25
+- **Discovered By / During**: SPEC-002a plan p2, plan audit
+- **Priority**: `P3 (Low)`
+- **Why Not Now?**: Needs YAML and JSON Schema dev-dependencies (build time on the 8 GB Mac). D12 validated the shapes and key-set tests cover dropped or extra fields.
+- **Context & Problem Statement**:
+  Responses are checked by hand-written key-set assertions, not against the contract schemas.
+- **Proto-Spec Sketch (Suggested Approach)**:
+  - Validate each response body against the `openapi.yaml` schemas with a JSON Schema validator in CI.
+- **Graduation / Promotion Criteria**:
+  - The contract changes again, or a conformance bug slips through.
+
+### [TODO-020] Cache observability for master-data endpoints (`P2-PS3`)
+- **Status**: `PROPOSED`
+- **Service**: client
+- **Discovered On**: 2026-11-25
+- **Discovered By / During**: SPEC-002a plan p2, plan audit
+- **Priority**: `P3 (Low)`
+- **Why Not Now?**: One manual staging check before the frontend switch is enough.
+- **Context & Problem Statement**:
+  No dashboard shows the Workers Cache hit ratio or the CPU of a miss per endpoint.
+- **Proto-Spec Sketch (Suggested Approach)**:
+  - Use Workers Analytics or the GraphQL API to chart hit ratio and CPU time per endpoint.
+- **Graduation / Promotion Criteria**:
+  - The frontend reads master data from the API in production.
 
 ---
 

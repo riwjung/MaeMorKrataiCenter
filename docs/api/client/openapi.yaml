@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: MaeMorKratai Client Backend API
-  version: 0.2.0
+  version: 0.2.1
   description: |
     Public, read-only contract for backend-client.
 
@@ -38,15 +38,16 @@ info:
     **Plain text.** All text fields are plain text (newlines allowed). Render as text,
     never as HTML.
 
-    **Errors.** Unknown paths return 404. POST, PUT, PATCH or DELETE on any path
-    returns 405. Both use the error envelope and `Cache-Control: no-store`.
+    **Errors.** An unknown path returns 404 whatever the method. POST, PUT, PATCH or
+    DELETE on a known path returns 405 with an `Allow` header listing the accepted
+    methods. Both use the error envelope and `Cache-Control: no-store` (D12).
 servers:
   - url: http://127.0.0.1:8788
     description: Local Wrangler dev
-  - url: https://api-staging.maemorkratai.com
-    description: Staging environment
+  - url: https://maemorkratai-backend-client-staging.maemorkratai.workers.dev
+    description: Staging environment (workers.dev; no custom domain yet)
   - url: https://api.maemorkratai.com
-    description: Production environment
+    description: Production environment (planned; not deployed yet)
 paths:
   /health:
     get:

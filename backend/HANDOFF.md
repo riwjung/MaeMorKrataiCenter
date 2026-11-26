@@ -9,7 +9,7 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 
 ## 1. Executive Summary & Progress
 
-- **Project Status**: `PLANNING` (SPEC-002 split; SPEC-002a and SPEC-002b approved, not planned) · staging deployed 2026-11-25
+- **Project Status**: `EXECUTING (SPEC-002a plans aligned; next: gb-execute)` · staging deployed 2026-11-25
 - **Last Updated**: 2026-11-25
 - **Owner**: the project owner, alone since 2026-11-24 (frontend and backend). The scaffold was built by a friend who has stopped.
 - **Active Session Agent**: Developer + Claude Code
@@ -49,7 +49,7 @@ One handoff for the whole `backend/` workspace (`client` and `admin` Workers). U
 ## 3. Active In-Flight Work
 
 - **Active Spec**: [`docs/specs/SPEC-002a-master-data-schema-seed-public-read.md`](docs/specs/SPEC-002a-master-data-schema-seed-public-read.md) (`APPROVED`, `PASSED`, `complex`). Next: [`SPEC-002b`](docs/specs/SPEC-002b-master-data-admin-write.md) (`APPROVED`, `PASSED`, `complex`), after 002a is verified. Parent SPEC-002 split by D11.
-- **Active Plan**: None (next: `gb-plan` SPEC-002a)
+- **Active Plan**: [`docs/plans/SPEC-002a-PLAN-AUDIT.md`](docs/plans/SPEC-002a-PLAN-AUDIT.md) (`ALIGNED`, 2026-11-26): plans `SPEC-002a-p1-schema-seed` (6 tasks) then `SPEC-002a-p2-public-read` (9 tasks), one global order in the audit §2. Next task: `docs/plans/SPEC-002a-p1-schema-seed/01_SEED_DATA_CONVERSION.md`. Owner steps (staging deploy, seed load, required `d1-tests` check, D13 checklist) are in audit §4.
 - **Current Task In-Flight**: None (Phase 0 changes are in the working tree, waiting for the owner to commit)
 - **Active Battleground**: None
 
